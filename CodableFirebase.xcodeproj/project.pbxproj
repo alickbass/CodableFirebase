@@ -10,6 +10,8 @@
 		CE7DD3711F9CFA81000225C5 /* CodableFirebase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7DD3671F9CFA81000225C5 /* CodableFirebase.framework */; };
 		CE7DD3761F9CFA81000225C5 /* CodableFirebaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DD3751F9CFA81000225C5 /* CodableFirebaseTests.swift */; };
 		CE7DD3781F9CFA81000225C5 /* CodableFirebase.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7DD36A1F9CFA81000225C5 /* CodableFirebase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE7DD3831F9D04AE000225C5 /* FirestoreEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DD3811F9D04AE000225C5 /* FirestoreEncoder.swift */; };
+		CE7DD3841F9D04AE000225C5 /* FirestoreDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DD3821F9D04AE000225C5 /* FirestoreDecoder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +31,8 @@
 		CE7DD3701F9CFA81000225C5 /* CodableFirebaseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CodableFirebaseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE7DD3751F9CFA81000225C5 /* CodableFirebaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableFirebaseTests.swift; sourceTree = "<group>"; };
 		CE7DD3771F9CFA81000225C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CE7DD3811F9D04AE000225C5 /* FirestoreEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirestoreEncoder.swift; sourceTree = "<group>"; };
+		CE7DD3821F9D04AE000225C5 /* FirestoreDecoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirestoreDecoder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +76,8 @@
 			isa = PBXGroup;
 			children = (
 				CE7DD36A1F9CFA81000225C5 /* CodableFirebase.h */,
+				CE7DD3821F9D04AE000225C5 /* FirestoreDecoder.swift */,
+				CE7DD3811F9D04AE000225C5 /* FirestoreEncoder.swift */,
 				CE7DD36B1F9CFA81000225C5 /* Info.plist */,
 			);
 			path = CodableFirebase;
@@ -148,6 +154,7 @@
 				TargetAttributes = {
 					CE7DD3661F9CFA81000225C5 = {
 						CreatedOnToolsVersion = 9.0.1;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 					CE7DD36F1F9CFA81000225C5 = {
@@ -196,6 +203,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE7DD3831F9D04AE000225C5 /* FirestoreEncoder.swift in Sources */,
+				CE7DD3841F9D04AE000225C5 /* FirestoreDecoder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,6 +343,7 @@
 		CE7DD37C1F9CFA81000225C5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -347,6 +357,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.violentoctopus.CodableFirebase;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -355,6 +366,7 @@
 		CE7DD37D1F9CFA81000225C5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -376,6 +388,7 @@
 		CE7DD37F1F9CFA81000225C5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7H6SM4X3H7;
 				INFOPLIST_FILE = CodableFirebaseTests/Info.plist;
@@ -390,6 +403,7 @@
 		CE7DD3801F9CFA81000225C5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7H6SM4X3H7;
 				INFOPLIST_FILE = CodableFirebaseTests/Info.plist;
