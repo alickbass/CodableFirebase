@@ -273,34 +273,6 @@ fileprivate enum EnhancedBool : Codable {
     }
 }
 
-/// A type which encodes as an array directly through a single value container.
-struct Numbers : Codable, Equatable {
-    let values = [4, 8, 15, 16, 23, 42]
-    
-    init() {}
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let decodedValues = try container.decode([Int].self)
-        guard decodedValues == values else {
-            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "The Numbers are wrong!"))
-        }
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(values)
-    }
-    
-    static func ==(_ lhs: Numbers, _ rhs: Numbers) -> Bool {
-        return lhs.values == rhs.values
-    }
-    
-    static var testValue: Numbers {
-        return Numbers()
-    }
-}
-
 /// A type which encodes as a dictionary directly through a single value container.
 fileprivate final class Mapping : Codable, Equatable {
     let values: [String : URL]
@@ -397,6 +369,32 @@ class TestCodableFirestore: XCTestCase {
         let c = Counter()
         _testEncodeFailure(of: c)
         _testRoundTrip(of: TopLevelWrapper(c))
+    }
+    
+    // MARK: - Encoding Top-Level Structured Types
+    func testEncodingTopLevelStructuredStruct() {
+        // Address is a struct type with multiple fields.
+        _testRoundTrip(of: Address.testValue)
+    }
+    
+    func testEncodingTopLevelStructuredClass() {
+        // Person is a class with multiple fields.
+        _testRoundTrip(of: Person.testValue)
+    }
+    
+    func testEncodingTopLevelStructuredSingleClass() {
+        // Mapping is a class which encodes as a dictionary through a single value container.
+        _testRoundTrip(of: Mapping.testValue)
+    }
+    
+    func testEncodingTopLevelDeepStructuredType() {
+        // Company is a type with fields which are Codable themselves.
+        _testRoundTrip(of: Company.testValue)
+    }
+    
+    func testEncodingClassWhichSharesEncoderWithSuper() {
+        // Employee is a type which shares its encoder & decoder with its superclass, Person.
+        _testRoundTrip(of: Employee.testValue)
     }
     
     func testTypeCoercion() {
