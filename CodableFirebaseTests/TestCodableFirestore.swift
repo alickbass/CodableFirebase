@@ -355,6 +355,14 @@ class TestCodableFirestore: XCTestCase {
         XCTAssertEqual(try? FirestoreDecoder().decode(Document.self, from: dict) , model)
     }
     
+    func testEncodingTopLevelEmptyStruct() {
+        _testRoundTrip(of: EmptyStruct(), expected: [:])
+    }
+    
+    func testEncodingTopLevelEmptyClass() {
+        _testRoundTrip(of: EmptyClass(), expected: [:])
+    }
+    
     func testTypeCoercion() {
         _testRoundTripTypeCoercionFailure(of: [false, true], as: [Int].self)
         _testRoundTripTypeCoercionFailure(of: [false, true], as: [Int8].self)
