@@ -303,6 +303,10 @@ fileprivate final class Mapping : Codable, Equatable {
 
 /// Wraps a type T so that it can be encoded at the top level of a payload.
 fileprivate struct TopLevelWrapper<T> : Codable, Equatable where T : Codable, T : Equatable {
+    enum CodingKeys : String, CodingKey {
+        case value
+    }
+    
     let value: T
     
     init(_ value: T) {
@@ -311,6 +315,16 @@ fileprivate struct TopLevelWrapper<T> : Codable, Equatable where T : Codable, T 
     
     static func ==(_ lhs: TopLevelWrapper<T>, _ rhs: TopLevelWrapper<T>) -> Bool {
         return lhs.value == rhs.value
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        value = try container.decode(T.self, forKey: .value)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(value, forKey: .value)
     }
 }
 
@@ -518,6 +532,21 @@ class TestCodableFirestore: XCTestCase {
         _testRoundTrip(of: TopLevelWrapper(EnhancedBool.true))
         _testRoundTrip(of: TopLevelWrapper(EnhancedBool.false))
         _testRoundTrip(of: TopLevelWrapper(EnhancedBool.fileNotFound))
+    }
+    
+    func testEncodingTopLevelNumericTypes() {
+        _testRoundTrip(of: TopLevelWrapper(3 as Int))
+        _testRoundTrip(of: TopLevelWrapper(3 as Int8))
+        _testRoundTrip(of: TopLevelWrapper(3 as Int16))
+        _testRoundTrip(of: TopLevelWrapper(3 as Int32))
+        _testRoundTrip(of: TopLevelWrapper(3 as Int64))
+        _testRoundTrip(of: TopLevelWrapper(3 as UInt))
+        _testRoundTrip(of: TopLevelWrapper(3 as UInt8))
+        _testRoundTrip(of: TopLevelWrapper(3 as UInt16))
+        _testRoundTrip(of: TopLevelWrapper(3 as UInt32))
+        _testRoundTrip(of: TopLevelWrapper(3 as UInt64))
+        _testRoundTrip(of: TopLevelWrapper(3 as Float))
+        _testRoundTrip(of: TopLevelWrapper(3 as Double))
     }
     
     func testTypeCoercion() {
