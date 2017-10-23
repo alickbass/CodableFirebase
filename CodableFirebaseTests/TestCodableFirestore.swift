@@ -397,6 +397,17 @@ class TestCodableFirestore: XCTestCase {
         _testRoundTrip(of: Employee.testValue)
     }
     
+    func testEncodingTopLevelNullableType() {
+        // EnhancedBool is a type which encodes either as a Bool or as nil.
+        _testEncodeFailure(of: EnhancedBool.true)
+        _testEncodeFailure(of: EnhancedBool.false)
+        _testEncodeFailure(of: EnhancedBool.fileNotFound)
+        
+        _testRoundTrip(of: TopLevelWrapper(EnhancedBool.true))
+        _testRoundTrip(of: TopLevelWrapper(EnhancedBool.false))
+        _testRoundTrip(of: TopLevelWrapper(EnhancedBool.fileNotFound))
+    }
+    
     func testTypeCoercion() {
         _testRoundTripTypeCoercionFailure(of: [false, true], as: [Int].self)
         _testRoundTripTypeCoercionFailure(of: [false, true], as: [Int8].self)
