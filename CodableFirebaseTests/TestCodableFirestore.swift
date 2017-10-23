@@ -329,6 +329,19 @@ fileprivate final class Mapping : Codable, Equatable {
     }
 }
 
+/// Wraps a type T so that it can be encoded at the top level of a payload.
+fileprivate struct TopLevelWrapper<T> : Codable, Equatable where T : Codable, T : Equatable {
+    let value: T
+    
+    init(_ value: T) {
+        self.value = value
+    }
+    
+    static func ==(_ lhs: TopLevelWrapper<T>, _ rhs: TopLevelWrapper<T>) -> Bool {
+        return lhs.value == rhs.value
+    }
+}
+
 class TestCodableFirestore: XCTestCase {
     
     func testFirebaseEncoder() {
@@ -363,6 +376,29 @@ class TestCodableFirestore: XCTestCase {
         _testRoundTrip(of: EmptyClass(), expected: [:])
     }
     
+    // MARK: - Encoding Top-Level Single-Value Types
+    func testEncodingTopLevelSingleValueEnum() {
+        let s1 = Switch.off
+        _testEncodeFailure(of: s1)
+        _testRoundTrip(of: TopLevelWrapper(s1))
+        
+        let s2 = Switch.on
+        _testEncodeFailure(of: s2)
+        _testRoundTrip(of: TopLevelWrapper(s2))
+    }
+    
+    func testEncodingTopLevelSingleValueStruct() {
+        let t = Timestamp(3141592653)
+        _testEncodeFailure(of: t)
+        _testRoundTrip(of: TopLevelWrapper(t))
+    }
+    
+    func testEncodingTopLevelSingleValueClass() {
+        let c = Counter()
+        _testEncodeFailure(of: c)
+        _testRoundTrip(of: TopLevelWrapper(c))
+    }
+    
     func testTypeCoercion() {
         _testRoundTripTypeCoercionFailure(of: [false, true], as: [Int].self)
         _testRoundTripTypeCoercionFailure(of: [false, true], as: [Int8].self)
@@ -388,6 +424,13 @@ class TestCodableFirestore: XCTestCase {
         _testRoundTripTypeCoercionFailure(of: [0, 1] as [UInt64], as: [Bool].self)
         _testRoundTripTypeCoercionFailure(of: [0.0, 1.0] as [Float], as: [Bool].self)
         _testRoundTripTypeCoercionFailure(of: [0.0, 1.0] as [Double], as: [Bool].self)
+    }
+    
+    private func _testEncodeFailure<T : Encodable>(of value: T) {
+        do {
+            let _ = try FirestoreEncoder().encode(value)
+            XCTFail("Encode of top-level \(T.self) was expected to fail.")
+        } catch {}
     }
     
     private func _testRoundTripTypeCoercionFailure<T,U>(of value: T, as type: U.Type) where T : Codable, U : Codable {
