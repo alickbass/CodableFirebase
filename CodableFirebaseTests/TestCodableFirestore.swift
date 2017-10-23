@@ -389,4 +389,24 @@ class TestCodableFirestore: XCTestCase {
             XCTFail("Coercion from \(T.self) to \(U.self) was expected to fail.")
         } catch {}
     }
+    
+    private func _testRoundTrip<T>(of value: T, expected dict: [String: Any]? = nil) where T : Codable, T : Equatable {
+        var payload: [String: Any]! = nil
+        do {
+            payload = try FirestoreEncoder().encode(value)
+        } catch {
+            XCTFail("Failed to encode \(T.self) to plist: \(error)")
+        }
+        
+        if let expectedDict = dict {
+            XCTAssertEqual(payload as NSDictionary, expectedDict as NSDictionary, "Produced dictionary not identical to expected dictionary")
+        }
+        
+        do {
+            let decoded = try FirestoreDecoder().decode(T.self, from: payload)
+            XCTAssertEqual(decoded, value, "\(T.self) did not round-trip to an equal value.")
+        } catch {
+            XCTFail("Failed to decode \(T.self) from plist: \(error)")
+        }
+    }
 }
