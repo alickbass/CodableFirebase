@@ -6,7 +6,7 @@
 //  Copyright © 2017 ViolentOctopus. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for CodableFirebase.
 FOUNDATION_EXPORT double CodableFirebaseVersionNumber;
