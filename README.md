@@ -25,6 +25,7 @@ And this is how you would encode it with [Firebase Firestore](https://firebase.g
 
 ```swift
 import Firebase
+import CodableFirebase
 
 let model: Model // here you will create an instance of Model
 let docData = try! FirestoreEncoder().encode(model)
