@@ -2,8 +2,8 @@
 Use Codable with Firebase
 
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) 
-[![Build Status](https://travis-ci.org/alickbass/SweetRouter.svg?branch=master)](https://travis-ci.org/alickbass/SweetRouter)
-[![codecov](https://codecov.io/gh/alickbass/SweetRouter/branch/master/graph/badge.svg)](https://codecov.io/gh/alickbass/SweetRouter)
+[![Build Status](https://travis-ci.org/alickbass/CodableFirebase.svg?branch=master)](https://travis-ci.org/alickbass/CodableFirebase)
+[![codecov](https://codecov.io/gh/alickbass/CodableFirebase/branch/master/graph/badge.svg)](https://codecov.io/gh/alickbass/CodableFirebase)
 
 ## Overview
 
@@ -23,7 +23,7 @@ struct Model: Codable {
 
 And this is how you would encode it with [Firebase Firestore](https://firebase.google.com/products/firestore/):
 
-```
+```swift
 import Firebase
 
 let model: Model // here you will create an instance of Model
