@@ -1,5 +1,5 @@
 # CodableFirebase
-Use Codable with Firebase
+Use [Codable](https://developer.apple.com/documentation/swift/codable) with [Firebase](https://firebase.google.com)
 
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) 
 [![Build Status](https://travis-ci.org/alickbass/CodableFirebase.svg?branch=master)](https://travis-ci.org/alickbass/CodableFirebase)
@@ -34,6 +34,19 @@ Firestore.firestore().collection("data").document("one").setData(docData) { err 
         print("Error writing document: \(err)")
     } else {
         print("Document successfully written!")
+    }
+}
+```
+
+And this is how you would decode the same model with [Firebase Firestore](https://firebase.google.com/products/firestore/):
+
+```swift
+Firestore.firestore().collection("data").document("one").getDocument { (document, error) in
+    if let document = document {
+        let model = try! FirestoreDecoder().decode(Model.self, from: document.data())
+        print("Model: \(model)")
+    } else {
+        print("Document does not exist")
     }
 }
 ```
