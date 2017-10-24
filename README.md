@@ -27,14 +27,12 @@ And this is how you would encode it with [Firebase Firestore](https://firebase.g
 import Firebase
 
 let model: Model // here you will create an instance of Model
-do {
-    let docData = try FirestoreEncoder().encode(model)
-    Firestore.firestore().collection("data").document("one").setData(docData) { err in
-        if let err = err {
-            print("Error writing document: \(err)")
-        } else {
-            print("Document successfully written!")
-        }
+let docData = try! FirestoreEncoder().encode(model)
+Firestore.firestore().collection("data").document("one").setData(docData) { err in
+    if let err = err {
+        print("Error writing document: \(err)")
+    } else {
+        print("Document successfully written!")
     }
 }
 ```
