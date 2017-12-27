@@ -11,6 +11,8 @@ import Foundation
 open class FirestoreEncoder {
     public init() {}
     
+    open var userInfo: [CodingUserInfoKey : Any] = [:]
+    
     open func encode<Value : Encodable>(_ value: Value) throws -> [String: Any] {
         let topLevel = try encodeToTopLevelContainer(value)
         switch topLevel {
@@ -24,7 +26,8 @@ open class FirestoreEncoder {
     }
     
     internal func encodeToTopLevelContainer<Value : Encodable>(_ value: Value) throws -> Any {
-        let encoder = _FirebaseEncoder()
+        let options = _FirebaseEncoder._Options(dateEncodingStrategy: nil, dataEncodingStrategy: nil, userInfo: userInfo)
+        let encoder = _FirebaseEncoder(options: options)
         guard let topLevel = try encoder.box_(value) else {
             throw EncodingError.invalidValue(value,
                                              EncodingError.Context(codingPath: [],

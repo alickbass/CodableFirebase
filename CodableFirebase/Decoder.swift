@@ -9,23 +9,68 @@
 import Foundation
 
 class _FirebaseDecoder : Decoder {
+    /// The strategy to use for decoding `Date` values.
+    enum DateDecodingStrategy {
+        /// Defer to `Date` for decoding. This is the default strategy.
+        case deferredToDate
+        
+        /// Decode the `Date` as a UNIX timestamp from a JSON number.
+        case secondsSince1970
+        
+        /// Decode the `Date` as UNIX millisecond timestamp from a JSON number.
+        case millisecondsSince1970
+        
+        /// Decode the `Date` as an ISO-8601-formatted string (in RFC 3339 format).
+        @available(OSX 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
+        case iso8601
+        
+        /// Decode the `Date` as a string parsed by the given formatter.
+        case formatted(DateFormatter)
+        
+        /// Decode the `Date` as a custom value decoded by the given closure.
+        case custom((_ decoder: Decoder) throws -> Date)
+    }
+    
+    /// The strategy to use for decoding `Data` values.
+    enum DataDecodingStrategy {
+        /// Defer to `Data` for decoding.
+        case deferredToData
+        
+        /// Decode the `Data` from a Base64-encoded string. This is the default strategy.
+        case base64
+        
+        /// Decode the `Data` as a custom value decoded by the given closure.
+        case custom((_ decoder: Decoder) throws -> Data)
+    }
+    
+    /// Options set on the top-level encoder to pass down the decoding hierarchy.
+    struct _Options {
+        let dateDecodingStrategy: DateDecodingStrategy?
+        let dataDecodingStrategy: DataDecodingStrategy?
+        let userInfo: [CodingUserInfoKey : Any]
+    }
+    
     // MARK: Properties
     /// The decoder's storage.
     fileprivate var storage: _FirebaseDecodingStorage
+    
+    fileprivate let options: _Options
     
     /// The path to the current point in encoding.
     fileprivate(set) public var codingPath: [CodingKey]
     
     /// Contextual user-provided information for use during encoding.
-    public var userInfo: [CodingUserInfoKey : Any]
+    public var userInfo: [CodingUserInfoKey : Any] {
+        return options.userInfo
+    }
     
     // MARK: - Initialization
     /// Initializes `self` with the given top-level container and options.
-    init(referencing container: Any, at codingPath: [CodingKey] = []) {
+    init(referencing container: Any, at codingPath: [CodingKey] = [], options: _Options) {
         self.storage = _FirebaseDecodingStorage()
         self.storage.push(container: container)
         self.codingPath = codingPath
-        userInfo = [:]
+        self.options = options
     }
     
     // MARK: - Decoder Methods
@@ -398,7 +443,7 @@ fileprivate struct _FirebaseKeyedDecodingContainer<K : CodingKey> : KeyedDecodin
         defer { self.decoder.codingPath.removeLast() }
         
         let value: Any = container[key.stringValue] ?? NSNull()
-        return _FirebaseDecoder(referencing: value, at: self.decoder.codingPath)
+        return _FirebaseDecoder(referencing: value, at: self.decoder.codingPath, options: decoder.options)
     }
     
     public func superDecoder() throws -> Decoder {
@@ -759,7 +804,7 @@ fileprivate struct _FirebaseUnkeyedDecodingContainer : UnkeyedDecodingContainer 
         
         let value = self.container[self.currentIndex]
         self.currentIndex += 1
-        return _FirebaseDecoder(referencing: value, at: self.decoder.codingPath)
+        return _FirebaseDecoder(referencing: value, at: decoder.codingPath, options: decoder.options)
     }
 }
 
@@ -1097,21 +1142,91 @@ extension _FirebaseDecoder {
     func unbox(_ value: Any, as type: Date.Type) throws -> Date? {
         guard !(value is NSNull) else { return nil }
         
-        guard let date = value as? Date else {
-            throw DecodingError._typeMismatch(at: codingPath, expectation: type, reality: value)
+        guard let options = options.dateDecodingStrategy else {
+            guard let date = value as? Date else {
+                throw DecodingError._typeMismatch(at: codingPath, expectation: type, reality: value)
+            }
+            return date
         }
         
-        return date
+        switch options {
+        case .deferredToDate:
+            self.storage.push(container: value)
+            let date = try Date(from: self)
+            self.storage.popContainer()
+            return date
+            
+        case .secondsSince1970:
+            let double = try self.unbox(value, as: Double.self)!
+            return Date(timeIntervalSince1970: double)
+            
+        case .millisecondsSince1970:
+            let double = try self.unbox(value, as: Double.self)!
+            return Date(timeIntervalSince1970: double / 1000.0)
+            
+        case .iso8601:
+            if #available(OSX 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *) {
+                let string = try self.unbox(value, as: String.self)!
+                guard let date = _iso8601Formatter.date(from: string) else {
+                    throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected date string to be ISO8601-formatted."))
+                }
+                
+                return date
+            } else {
+                fatalError("ISO8601DateFormatter is unavailable on this platform.")
+            }
+            
+        case .formatted(let formatter):
+            let string = try self.unbox(value, as: String.self)!
+            guard let date = formatter.date(from: string) else {
+                throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Date string does not match format expected by formatter."))
+            }
+            
+            return date
+            
+        case .custom(let closure):
+            self.storage.push(container: value)
+            let date = try closure(self)
+            self.storage.popContainer()
+            return date
+        }
     }
     
     func unbox(_ value: Any, as type: Data.Type) throws -> Data? {
         guard !(value is NSNull) else { return nil }
         
-        guard let data = value as? Data else {
-            throw DecodingError._typeMismatch(at: codingPath, expectation: type, reality: value)
+        guard let options = options.dataDecodingStrategy else {
+            guard let data = value as? Data else {
+                throw DecodingError._typeMismatch(at: codingPath, expectation: type, reality: value)
+            }
+            
+            return data
         }
         
-        return data
+        switch options {
+        case .deferredToData:
+            self.storage.push(container: value)
+            let data = try Data(from: self)
+            self.storage.popContainer()
+            return data
+            
+        case .base64:
+            guard let string = value as? String else {
+                throw DecodingError._typeMismatch(at: self.codingPath, expectation: type, reality: value)
+            }
+            
+            guard let data = Data(base64Encoded: string) else {
+                throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Encountered Data is not valid Base64."))
+            }
+            
+            return data
+            
+        case .custom(let closure):
+            self.storage.push(container: value)
+            let data = try closure(self)
+            self.storage.popContainer()
+            return data
+        }
     }
     
     func unbox(_ value: Any, as type: Decimal.Type) throws -> Decimal? {
@@ -1157,3 +1272,10 @@ extension _FirebaseDecoder {
         return decoded
     }
 }
+
+@available(OSX 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
+internal var _iso8601Formatter: ISO8601DateFormatter = {
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = .withInternetDateTime
+    return formatter
+}()

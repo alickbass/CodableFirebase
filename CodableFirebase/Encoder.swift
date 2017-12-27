@@ -9,14 +9,64 @@
 import Foundation
 
 class _FirebaseEncoder : Encoder {
-    fileprivate var storage: _FirebaseEncodingStorage
-    fileprivate(set) public var codingPath: [CodingKey]
-    public var userInfo: [CodingUserInfoKey : Any]
     
-    init(codingPath: [CodingKey] = []) {
+    /// The strategy to use for encoding `Date` values.
+    public enum DateEncodingStrategy {
+        /// Defer to `Date` for choosing an encoding. This is the default strategy.
+        case deferredToDate
+        
+        /// Encode the `Date` as a UNIX timestamp (as a JSON number).
+        case secondsSince1970
+        
+        /// Encode the `Date` as UNIX millisecond timestamp (as a JSON number).
+        case millisecondsSince1970
+        
+        /// Encode the `Date` as an ISO-8601-formatted string (in RFC 3339 format).
+        @available(OSX 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
+        case iso8601
+        
+        /// Encode the `Date` as a string formatted by the given formatter.
+        case formatted(DateFormatter)
+        
+        /// Encode the `Date` as a custom value encoded by the given closure.
+        ///
+        /// If the closure fails to encode a value into the given encoder, the encoder will encode an empty automatic container in its place.
+        case custom((Date, Encoder) throws -> Void)
+    }
+    
+    /// The strategy to use for encoding `Data` values.
+    public enum DataEncodingStrategy {
+        /// Defer to `Data` for choosing an encoding.
+        case deferredToData
+        
+        /// Encoded the `Data` as a Base64-encoded string. This is the default strategy.
+        case base64
+        
+        /// Encode the `Data` as a custom value encoded by the given closure.
+        ///
+        /// If the closure fails to encode a value into the given encoder, the encoder will encode an empty automatic container in its place.
+        case custom((Data, Encoder) throws -> Void)
+    }
+    
+    /// Options set on the top-level encoder to pass down the encoding hierarchy.
+    struct _Options {
+        let dateEncodingStrategy: DateEncodingStrategy?
+        let dataEncodingStrategy: DataEncodingStrategy?
+        let userInfo: [CodingUserInfoKey : Any]
+    }
+    
+    fileprivate var storage: _FirebaseEncodingStorage
+    fileprivate let options: _Options
+    fileprivate(set) public var codingPath: [CodingKey]
+    
+    public var userInfo: [CodingUserInfoKey : Any] {
+        return options.userInfo
+    }
+    
+    init(options: _Options, codingPath: [CodingKey] = []) {
         self.storage = _FirebaseEncodingStorage()
         self.codingPath = codingPath
-        userInfo = [:]
+        self.options = options
     }
     
     /// Returns whether a new element can be encoded at this coding path.
@@ -299,11 +349,78 @@ extension _FirebaseEncoder {
         return try self.box_(value) ?? NSDictionary()
     }
     
+    fileprivate func box(_ date: Date) throws -> NSObject {
+        guard let options = options.dateEncodingStrategy else { return date as NSDate }
+        
+        switch options {
+        case .deferredToDate:
+            // Must be called with a surrounding with(pushedKey:) call.
+            try date.encode(to: self)
+            return self.storage.popContainer()
+            
+        case .secondsSince1970:
+            return NSNumber(value: date.timeIntervalSince1970)
+            
+        case .millisecondsSince1970:
+            return NSNumber(value: 1000.0 * date.timeIntervalSince1970)
+            
+        case .iso8601:
+            if #available(OSX 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *) {
+                return NSString(string: _iso8601Formatter.string(from: date))
+            } else {
+                fatalError("ISO8601DateFormatter is unavailable on this platform.")
+            }
+            
+        case .formatted(let formatter):
+            return NSString(string: formatter.string(from: date))
+            
+        case .custom(let closure):
+            let depth = self.storage.count
+            try closure(date, self)
+            
+            guard self.storage.count > depth else {
+                // The closure didn't encode anything. Return the default keyed container.
+                return NSDictionary()
+            }
+            
+            // We can pop because the closure encoded something.
+            return self.storage.popContainer()
+        }
+    }
+    
+    fileprivate func box(_ data: Data) throws -> NSObject {
+        guard let options = options.dataEncodingStrategy else { return data as NSData }
+        
+        switch options {
+        case .deferredToData:
+            // Must be called with a surrounding with(pushedKey:) call.
+            try data.encode(to: self)
+            return self.storage.popContainer()
+            
+        case .base64:
+            return NSString(string: data.base64EncodedString())
+            
+        case .custom(let closure):
+            let depth = self.storage.count
+            try closure(data, self)
+            
+            guard self.storage.count > depth else {
+                // The closure didn't encode anything. Return the default keyed container.
+                return NSDictionary()
+            }
+            
+            // We can pop because the closure encoded something.
+            return self.storage.popContainer()
+        }
+    }
+    
     func box_<T : Encodable>(_ value: T) throws -> NSObject? {
         if T.self == Date.self || T.self == NSDate.self {
-            return (value as! NSDate)
+            return try self.box((value as! Date))
         } else if T.self == Data.self || T.self == NSData.self {
-            return (value as! NSData)
+            return try self.box((value as! Data))
+        } else if T.self == URL.self || T.self == NSURL.self {
+            return self.box((value as! URL).absoluteString)
         }
         
         // The value should request a container from the _FirebaseEncoder.
@@ -429,7 +546,7 @@ fileprivate class _FirebaseReferencingEncoder : _FirebaseEncoder {
     fileprivate init(referencing encoder: _FirebaseEncoder, at index: Int, wrapping array: NSMutableArray) {
         self.encoder = encoder
         self.reference = .array(array, index)
-        super.init(codingPath: encoder.codingPath)
+        super.init(options: encoder.options, codingPath: encoder.codingPath)
         
         self.codingPath.append(_FirebaseKey(index: index))
     }
@@ -438,7 +555,7 @@ fileprivate class _FirebaseReferencingEncoder : _FirebaseEncoder {
     fileprivate init(referencing encoder: _FirebaseEncoder, at key: CodingKey, wrapping dictionary: NSMutableDictionary) {
         self.encoder = encoder
         reference = .dictionary(dictionary, key.stringValue)
-        super.init(codingPath: encoder.codingPath)
+        super.init(options: encoder.options, codingPath: encoder.codingPath)
         codingPath.append(key)
     }
     
