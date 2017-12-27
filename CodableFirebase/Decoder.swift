@@ -1142,11 +1142,54 @@ extension _FirebaseDecoder {
     func unbox(_ value: Any, as type: Date.Type) throws -> Date? {
         guard !(value is NSNull) else { return nil }
         
-        guard let date = value as? Date else {
-            throw DecodingError._typeMismatch(at: codingPath, expectation: type, reality: value)
+        guard let options = options.dateDecodingStrategy else {
+            guard let date = value as? Date else {
+                throw DecodingError._typeMismatch(at: codingPath, expectation: type, reality: value)
+            }
+            return date
         }
         
-        return date
+        switch options {
+        case .deferredToDate:
+            self.storage.push(container: value)
+            let date = try Date(from: self)
+            self.storage.popContainer()
+            return date
+            
+        case .secondsSince1970:
+            let double = try self.unbox(value, as: Double.self)!
+            return Date(timeIntervalSince1970: double)
+            
+        case .millisecondsSince1970:
+            let double = try self.unbox(value, as: Double.self)!
+            return Date(timeIntervalSince1970: double / 1000.0)
+            
+        case .iso8601:
+            if #available(OSX 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *) {
+                let string = try self.unbox(value, as: String.self)!
+                guard let date = _iso8601Formatter.date(from: string) else {
+                    throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected date string to be ISO8601-formatted."))
+                }
+                
+                return date
+            } else {
+                fatalError("ISO8601DateFormatter is unavailable on this platform.")
+            }
+            
+        case .formatted(let formatter):
+            let string = try self.unbox(value, as: String.self)!
+            guard let date = formatter.date(from: string) else {
+                throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Date string does not match format expected by formatter."))
+            }
+            
+            return date
+            
+        case .custom(let closure):
+            self.storage.push(container: value)
+            let date = try closure(self)
+            self.storage.popContainer()
+            return date
+        }
     }
     
     func unbox(_ value: Any, as type: Data.Type) throws -> Data? {
@@ -1202,3 +1245,10 @@ extension _FirebaseDecoder {
         return decoded
     }
 }
+
+@available(OSX 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
+fileprivate var _iso8601Formatter: ISO8601DateFormatter = {
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = .withInternetDateTime
+    return formatter
+}()
