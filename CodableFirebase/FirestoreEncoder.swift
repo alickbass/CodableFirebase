@@ -202,7 +202,7 @@ fileprivate struct _FirestoreKeyedEncodingContainer<K : CodingKey> : KeyedEncodi
     }
     
     public mutating func superEncoder() -> Encoder {
-        return _FirestoreReferencingEncoder(referencing: encoder, at: _FirestoreKey.super, wrapping: container)
+        return _FirestoreReferencingEncoder(referencing: encoder, at: _FirebaseKey.super, wrapping: container)
     }
     
     public mutating func superEncoder(forKey key: Key) -> Encoder {
@@ -252,13 +252,13 @@ fileprivate struct _FirestoreUnkeyedEncodingContainer : UnkeyedEncodingContainer
     public mutating func encode(_ value: String) throws { container.add(self.encoder.box(value)) }
     
     public mutating func encode<T : Encodable>(_ value: T) throws {
-        encoder.codingPath.append(_FirestoreKey(index: count))
+        encoder.codingPath.append(_FirebaseKey(index: count))
         defer { encoder.codingPath.removeLast() }
         container.add(try encoder.box(value))
     }
     
     public mutating func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> {
-        self.codingPath.append(_FirestoreKey(index: self.count))
+        self.codingPath.append(_FirebaseKey(index: self.count))
         defer { self.codingPath.removeLast() }
         
         let dictionary = NSMutableDictionary()
@@ -269,7 +269,7 @@ fileprivate struct _FirestoreUnkeyedEncodingContainer : UnkeyedEncodingContainer
     }
     
     public mutating func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
-        self.codingPath.append(_FirestoreKey(index: self.count))
+        self.codingPath.append(_FirebaseKey(index: self.count))
         defer { self.codingPath.removeLast() }
         
         let array = NSMutableArray()
@@ -282,7 +282,7 @@ fileprivate struct _FirestoreUnkeyedEncodingContainer : UnkeyedEncodingContainer
     }
 }
 
-struct _FirestoreKey : CodingKey {
+struct _FirebaseKey : CodingKey {
     public var stringValue: String
     public var intValue: Int?
     
@@ -301,7 +301,7 @@ struct _FirestoreKey : CodingKey {
         self.intValue = index
     }
     
-    static let `super` = _FirestoreKey(stringValue: "super")!
+    static let `super` = _FirebaseKey(stringValue: "super")!
 }
 
 extension _FirestoreEncoder {
@@ -458,7 +458,7 @@ fileprivate class _FirestoreReferencingEncoder : _FirestoreEncoder {
         self.reference = .array(array, index)
         super.init(codingPath: encoder.codingPath)
         
-        self.codingPath.append(_FirestoreKey(index: index))
+        self.codingPath.append(_FirebaseKey(index: index))
     }
     
     /// Initializes `self` by referencing the given dictionary container in the given encoder.
