@@ -24,7 +24,7 @@ open class FirestoreEncoder {
     }
     
     internal func encodeToTopLevelContainer<Value : Encodable>(_ value: Value) throws -> Any {
-        let encoder = _FirestoreEncoder()
+        let encoder = _FirebaseEncoder()
         guard let topLevel = try encoder.box_(value) else {
             throw EncodingError.invalidValue(value,
                                              EncodingError.Context(codingPath: [],
