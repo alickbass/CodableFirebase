@@ -302,7 +302,7 @@ fileprivate final class Mapping : Codable, Equatable {
 }
 
 /// Wraps a type T so that it can be encoded at the top level of a payload.
-fileprivate struct TopLevelWrapper<T> : Codable, Equatable where T : Codable, T : Equatable {
+struct TopLevelWrapper<T> : Codable, Equatable where T : Codable, T : Equatable {
     enum CodingKeys : String, CodingKey {
         case value
     }

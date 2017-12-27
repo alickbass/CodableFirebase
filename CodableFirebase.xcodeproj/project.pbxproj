@@ -16,6 +16,7 @@
 		CEFDBF861FF3B56200745EBE /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFDBF851FF3B56200745EBE /* Decoder.swift */; };
 		CEFDBF8A1FF3E24200745EBE /* FirebaseDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFDBF891FF3E24200745EBE /* FirebaseDecoder.swift */; };
 		CEFDBF8C1FF3E3CB00745EBE /* FirebaseEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFDBF8B1FF3E3CB00745EBE /* FirebaseEncoder.swift */; };
+		CEFDBF8E1FF3E63700745EBE /* CodaleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFDBF8D1FF3E63700745EBE /* CodaleTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +42,7 @@
 		CEFDBF851FF3B56200745EBE /* Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decoder.swift; sourceTree = "<group>"; };
 		CEFDBF891FF3E24200745EBE /* FirebaseDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDecoder.swift; sourceTree = "<group>"; };
 		CEFDBF8B1FF3E3CB00745EBE /* FirebaseEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseEncoder.swift; sourceTree = "<group>"; };
+		CEFDBF8D1FF3E63700745EBE /* CodaleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodaleTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 		CE7DD3741F9CFA81000225C5 /* CodableFirebaseTests */ = {
 			isa = PBXGroup;
 			children = (
+				CEFDBF8D1FF3E63700745EBE /* CodaleTests.swift */,
 				CE7DD3851F9DE4F7000225C5 /* TestCodableFirestore.swift */,
 				CE7DD3771F9CFA81000225C5 /* Info.plist */,
 			);
@@ -229,6 +232,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE7DD3861F9DE4F7000225C5 /* TestCodableFirestore.swift in Sources */,
+				CEFDBF8E1FF3E63700745EBE /* CodaleTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
