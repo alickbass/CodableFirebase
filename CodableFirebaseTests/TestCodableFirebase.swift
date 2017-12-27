@@ -389,7 +389,7 @@ class TestCodableFirebase: XCTestCase {
         }
         
         if let expectedJSON = json.flatMap({ $0 as? NSObject }), let payload = payload as? NSObject {
-            XCTAssertEqual(expectedJSON, payload, "Produced JSON not identical to expected JSON.")
+            XCTAssertEqual(expectedJSON, payload, "Produced value not identical to expected value.")
         }
         
         do {
