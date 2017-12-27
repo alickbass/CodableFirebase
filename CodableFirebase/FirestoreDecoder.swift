@@ -11,8 +11,15 @@ import Foundation
 open class FirestoreDecoder {
     public init() {}
     
+    open var userInfo: [CodingUserInfoKey : Any] = [:]
+    
     open func decode<T : Decodable>(_ type: T.Type, from container: [String: Any]) throws -> T {
-        let decoder = _FirebaseDecoder(referencing: container)
+        let options = _FirebaseDecoder._Options(
+            dateDecodingStrategy: .deferredToDate,
+            dataDecodingStrategy: .deferredToData,
+            userInfo: userInfo
+        )
+        let decoder = _FirebaseDecoder(referencing: container, options: options)
         guard let value = try decoder.unbox(container, as: T.self) else {
             throw DecodingError.valueNotFound(T.self, DecodingError.Context(codingPath: [], debugDescription: "The given dictionary was invalid"))
         }

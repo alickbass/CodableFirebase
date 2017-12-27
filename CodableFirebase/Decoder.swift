@@ -9,23 +9,68 @@
 import Foundation
 
 class _FirebaseDecoder : Decoder {
+    /// The strategy to use for decoding `Date` values.
+    enum DateDecodingStrategy {
+        /// Defer to `Date` for decoding. This is the default strategy.
+        case deferredToDate
+        
+        /// Decode the `Date` as a UNIX timestamp from a JSON number.
+        case secondsSince1970
+        
+        /// Decode the `Date` as UNIX millisecond timestamp from a JSON number.
+        case millisecondsSince1970
+        
+        /// Decode the `Date` as an ISO-8601-formatted string (in RFC 3339 format).
+        @available(OSX 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
+        case iso8601
+        
+        /// Decode the `Date` as a string parsed by the given formatter.
+        case formatted(DateFormatter)
+        
+        /// Decode the `Date` as a custom value decoded by the given closure.
+        case custom((_ decoder: Decoder) throws -> Date)
+    }
+    
+    /// The strategy to use for decoding `Data` values.
+    enum DataDecodingStrategy {
+        /// Defer to `Data` for decoding.
+        case deferredToData
+        
+        /// Decode the `Data` from a Base64-encoded string. This is the default strategy.
+        case base64
+        
+        /// Decode the `Data` as a custom value decoded by the given closure.
+        case custom((_ decoder: Decoder) throws -> Data)
+    }
+    
+    /// Options set on the top-level encoder to pass down the decoding hierarchy.
+    struct _Options {
+        let dateDecodingStrategy: DateDecodingStrategy
+        let dataDecodingStrategy: DataDecodingStrategy
+        let userInfo: [CodingUserInfoKey : Any]
+    }
+    
     // MARK: Properties
     /// The decoder's storage.
     fileprivate var storage: _FirebaseDecodingStorage
+    
+    fileprivate let options: _Options
     
     /// The path to the current point in encoding.
     fileprivate(set) public var codingPath: [CodingKey]
     
     /// Contextual user-provided information for use during encoding.
-    public var userInfo: [CodingUserInfoKey : Any]
+    public var userInfo: [CodingUserInfoKey : Any] {
+        return options.userInfo
+    }
     
     // MARK: - Initialization
     /// Initializes `self` with the given top-level container and options.
-    init(referencing container: Any, at codingPath: [CodingKey] = []) {
+    init(referencing container: Any, at codingPath: [CodingKey] = [], options: _Options) {
         self.storage = _FirebaseDecodingStorage()
         self.storage.push(container: container)
         self.codingPath = codingPath
-        userInfo = [:]
+        self.options = options
     }
     
     // MARK: - Decoder Methods
@@ -398,7 +443,7 @@ fileprivate struct _FirebaseKeyedDecodingContainer<K : CodingKey> : KeyedDecodin
         defer { self.decoder.codingPath.removeLast() }
         
         let value: Any = container[key.stringValue] ?? NSNull()
-        return _FirebaseDecoder(referencing: value, at: self.decoder.codingPath)
+        return _FirebaseDecoder(referencing: value, at: self.decoder.codingPath, options: decoder.options)
     }
     
     public func superDecoder() throws -> Decoder {
@@ -759,7 +804,7 @@ fileprivate struct _FirebaseUnkeyedDecodingContainer : UnkeyedDecodingContainer 
         
         let value = self.container[self.currentIndex]
         self.currentIndex += 1
-        return _FirebaseDecoder(referencing: value, at: self.decoder.codingPath)
+        return _FirebaseDecoder(referencing: value, at: decoder.codingPath, options: decoder.options)
     }
 }
 
