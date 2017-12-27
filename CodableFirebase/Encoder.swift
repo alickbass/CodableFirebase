@@ -419,6 +419,8 @@ extension _FirebaseEncoder {
             return try self.box((value as! Date))
         } else if T.self == Data.self || T.self == NSData.self {
             return try self.box((value as! Data))
+        } else if T.self == URL.self || T.self == NSURL.self {
+            return self.box((value as! URL).absoluteString)
         }
         
         // The value should request a container from the _FirebaseEncoder.
