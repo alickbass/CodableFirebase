@@ -45,8 +45,8 @@ class _FirebaseDecoder : Decoder {
     
     /// Options set on the top-level encoder to pass down the decoding hierarchy.
     struct _Options {
-        let dateDecodingStrategy: DateDecodingStrategy
-        let dataDecodingStrategy: DataDecodingStrategy
+        let dateDecodingStrategy: DateDecodingStrategy?
+        let dataDecodingStrategy: DataDecodingStrategy?
         let userInfo: [CodingUserInfoKey : Any]
     }
     
