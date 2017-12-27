@@ -1195,11 +1195,38 @@ extension _FirebaseDecoder {
     func unbox(_ value: Any, as type: Data.Type) throws -> Data? {
         guard !(value is NSNull) else { return nil }
         
-        guard let data = value as? Data else {
-            throw DecodingError._typeMismatch(at: codingPath, expectation: type, reality: value)
+        guard let options = options.dataDecodingStrategy else {
+            guard let data = value as? Data else {
+                throw DecodingError._typeMismatch(at: codingPath, expectation: type, reality: value)
+            }
+            
+            return data
         }
         
-        return data
+        switch options {
+        case .deferredToData:
+            self.storage.push(container: value)
+            let data = try Data(from: self)
+            self.storage.popContainer()
+            return data
+            
+        case .base64:
+            guard let string = value as? String else {
+                throw DecodingError._typeMismatch(at: self.codingPath, expectation: type, reality: value)
+            }
+            
+            guard let data = Data(base64Encoded: string) else {
+                throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Encountered Data is not valid Base64."))
+            }
+            
+            return data
+            
+        case .custom(let closure):
+            self.storage.push(container: value)
+            let data = try closure(self)
+            self.storage.popContainer()
+            return data
+        }
     }
     
     func unbox(_ value: Any, as type: Decimal.Type) throws -> Decimal? {
