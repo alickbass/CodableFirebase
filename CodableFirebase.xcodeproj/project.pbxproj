@@ -17,6 +17,7 @@
 		CEFDBF8A1FF3E24200745EBE /* FirebaseDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFDBF891FF3E24200745EBE /* FirebaseDecoder.swift */; };
 		CEFDBF8C1FF3E3CB00745EBE /* FirebaseEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFDBF8B1FF3E3CB00745EBE /* FirebaseEncoder.swift */; };
 		CEFDBF8E1FF3E63700745EBE /* CodaleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFDBF8D1FF3E63700745EBE /* CodaleTests.swift */; };
+		CEFDBF901FF3EB2900745EBE /* TestCodableFirebase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFDBF8F1FF3EB2900745EBE /* TestCodableFirebase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 		CEFDBF891FF3E24200745EBE /* FirebaseDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDecoder.swift; sourceTree = "<group>"; };
 		CEFDBF8B1FF3E3CB00745EBE /* FirebaseEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseEncoder.swift; sourceTree = "<group>"; };
 		CEFDBF8D1FF3E63700745EBE /* CodaleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodaleTests.swift; sourceTree = "<group>"; };
+		CEFDBF8F1FF3EB2900745EBE /* TestCodableFirebase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCodableFirebase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 			children = (
 				CEFDBF8D1FF3E63700745EBE /* CodaleTests.swift */,
 				CE7DD3851F9DE4F7000225C5 /* TestCodableFirestore.swift */,
+				CEFDBF8F1FF3EB2900745EBE /* TestCodableFirebase.swift */,
 				CE7DD3771F9CFA81000225C5 /* Info.plist */,
 			);
 			path = CodableFirebaseTests;
@@ -233,6 +236,7 @@
 			files = (
 				CE7DD3861F9DE4F7000225C5 /* TestCodableFirestore.swift in Sources */,
 				CEFDBF8E1FF3E63700745EBE /* CodaleTests.swift in Sources */,
+				CEFDBF901FF3EB2900745EBE /* TestCodableFirebase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
