@@ -80,3 +80,28 @@ Firestore.firestore().collection("data").document("one").getDocument { (document
     }
 }
 ```
+
+## Integration
+
+### CocoaPods (iOS 9+)
+
+You can use CocoaPods to install SwiftyJSONModel by adding it to your Podfile:
+
+```swift
+platform :ios, '9.0'
+use_frameworks!
+
+target 'MyApp' do
+pod 'CodableFirebase'
+end
+```
+
+Note that this requires CocoaPods version 36, and your iOS deployment target to be at least 8.0:
+
+### Carthage (iOS 9+)
+
+You can use Carthage to install SwiftyJSONModel by adding it to your Cartfile:
+
+```swift
+github "alickbass/CodableFirebase"
+```
