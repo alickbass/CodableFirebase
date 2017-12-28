@@ -7,7 +7,7 @@ Use [Codable](https://developer.apple.com/documentation/swift/codable) with [Fir
 
 ## Overview
 
-This library helps you to use your custom type that conform to `Codable` protocol with Firebase. Here's an example of model:
+This library helps you to use your custom types that conform to `Codable` protocol with Firebase. Here's an example of a custom model:
 
 ```swift
 struct Model: Codable {
