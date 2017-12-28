@@ -21,6 +21,36 @@ struct Model: Codable {
 }
 ```
 
+### Firebase Database usage
+
+This is how you would use the library with [Firebase Realtime Database](https://firebase.google.com/products/realtime-database/):
+
+```swift
+import Firebase
+import CodableFirebase
+
+let model: Model // here you will create an instance of Model
+let data = try! FirebaseEncoder().encode(model)
+
+Database.database().reference().child("model").setValue(data)
+```
+
+And here is how you would read the same value from [Firebase Realtime Database](https://firebase.google.com/products/realtime-database/):
+
+```swift
+Database.database().reference().child("model").observeSingleEvent(of: .value, with: { (snapshot) in
+    guard let value = snapshot.value else { return }
+    do {
+        let model = try FirebaseDecoder().decode(Model.self, from: value)
+        print(model)
+    } catch let error {
+        print(error)
+    }
+})
+```
+
+### Firestore usage
+
 And this is how you would encode it with [Firebase Firestore](https://firebase.google.com/products/firestore/):
 
 ```swift
