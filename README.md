@@ -3,7 +3,6 @@ Use [Codable](https://developer.apple.com/documentation/swift/codable) with [Fir
 
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) 
 [![Build Status](https://travis-ci.org/alickbass/CodableFirebase.svg?branch=master)](https://travis-ci.org/alickbass/CodableFirebase)
-[![codecov](https://codecov.io/gh/alickbass/CodableFirebase/branch/master/graph/badge.svg)](https://codecov.io/gh/alickbass/CodableFirebase)
 
 ## Overview
 
