@@ -11,6 +11,10 @@ This library helps you to use your custom types that conform to `Codable` protoc
 
 ```swift
 struct Model: Codable {
+    enum MyEnum: Int, Codable {
+        case one, two, three
+    }
+    
     let stringExample: String
     let booleanExample: Bool
     let numberExample: Double
@@ -18,6 +22,7 @@ struct Model: Codable {
     let arrayExample: [String]
     let nullExample: Int?
     let objectExample: [String: String]
+    let myEnum: MyEnum
 }
 ```
 
