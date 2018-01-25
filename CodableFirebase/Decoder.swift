@@ -13,6 +13,7 @@ class _FirebaseDecoder : Decoder {
     struct _Options {
         let dateDecodingStrategy: FirebaseDecoder.DateDecodingStrategy?
         let dataDecodingStrategy: FirebaseDecoder.DataDecodingStrategy?
+        let skipGeoPointAndReference: Bool
         let userInfo: [CodingUserInfoKey : Any]
     }
     
