@@ -58,6 +58,7 @@ extension GeoPointType {
 
 enum DocumentReferenceError: Error {
     case typeIsNotSupported
+    case typeIsNotNSObject
 }
 
 extension DocumentReferenceType {
