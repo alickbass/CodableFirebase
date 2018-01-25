@@ -8,6 +8,14 @@
 
 import Foundation
 
+protocol GeoPointType: Codable {
+    var latitude: Double { get }
+    var longitude: Double { get }
+    init(latitude: Double, longitude: Double)
+}
+
+protocol DocumentReferenceType: Codable {}
+
 open class FirestoreDecoder {
     public init() {}
     
@@ -26,5 +34,38 @@ open class FirestoreDecoder {
         }
         
         return value
+    }
+}
+
+enum GeoPointKeys: CodingKey {
+    case latitude, longitude
+}
+
+extension GeoPointType {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: GeoPointKeys.self)
+        let latitude = try container.decode(Double.self, forKey: .latitude)
+        let longitude = try container.decode(Double.self, forKey: .longitude)
+        self.init(latitude: latitude, longitude: longitude)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: GeoPointKeys.self)
+        try container.encode(latitude, forKey: .latitude)
+        try container.encode(longitude, forKey: .longitude)
+    }
+}
+
+enum DocumentReferenceError: Error {
+    case typeIsNotSupported
+}
+
+extension DocumentReferenceType {
+    public init(from decoder: Decoder) throws {
+        throw DocumentReferenceError.typeIsNotSupported
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        throw DocumentReferenceError.typeIsNotSupported
     }
 }

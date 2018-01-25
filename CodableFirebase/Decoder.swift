@@ -1230,6 +1230,8 @@ extension _FirebaseDecoder {
         } else if T.self == Decimal.self || T.self == NSDecimalNumber.self {
             guard let decimal = try self.unbox(value, as: Decimal.self) else { return nil }
             decoded = decimal as! T
+        } else if options.skipGeoPointAndReference && (T.self is GeoPointType || T.self is DocumentReferenceType) {
+            decoded = value as! T
         } else {
             self.storage.push(container: value)
             decoded = try T(from: self)
