@@ -26,7 +26,12 @@ open class FirestoreEncoder {
     }
     
     internal func encodeToTopLevelContainer<Value : Encodable>(_ value: Value) throws -> Any {
-        let options = _FirebaseEncoder._Options(dateEncodingStrategy: nil, dataEncodingStrategy: nil, userInfo: userInfo)
+        let options = _FirebaseEncoder._Options(
+            dateEncodingStrategy: nil,
+            dataEncodingStrategy: nil,
+            skipGeoPointAndReference: true,
+            userInfo: userInfo
+        )
         let encoder = _FirebaseEncoder(options: options)
         guard let topLevel = try encoder.box_(value) else {
             throw EncodingError.invalidValue(value,

@@ -109,6 +109,21 @@ class TestCodableFirestore: XCTestCase {
         _testRoundTrip(of: TopLevelWrapper(date), expected: ["value": date])
     }
     
+    // MARK: - GeoPoint & Document Reference
+    func testEncodingGeoPoint() {
+        let point = GeoPoint(latitude: 2, longitude: 2)
+        let wrapper = TopLevelWrapper(point)
+        XCTAssertEqual((try? FirestoreEncoder().encode(wrapper)) as NSDictionary?, ["value": point])
+        XCTAssertEqual(try? FirestoreDecoder().decode(TopLevelWrapper<GeoPoint>.self, from: ["value": point]), wrapper)
+        XCTAssertThrowsError(try FirestoreEncoder().encode(TopLevelWrapper(Point(latitude: 2, longitude: 2))))
+    }
+    
+    func testEncodingDocumentReference() {
+        let val = TopLevelWrapper(DocumentReference())
+        XCTAssertEqual((try? FirestoreEncoder().encode(val)) as NSDictionary?, ["value": val.value])
+        XCTAssertEqual(try? FirestoreDecoder().decode(TopLevelWrapper<DocumentReference>.self, from: ["value": val.value]), val)
+    }
+    
     private func _testEncodeFailure<T : Encodable>(of value: T) {
         do {
             let _ = try FirestoreEncoder().encode(value)
@@ -164,3 +179,21 @@ func expectEqualPaths(_ lhs: [CodingKey], _ rhs: [CodingKey], _ prefix: String) 
         XCTAssertEqual(key1.stringValue, key2.stringValue, "\(prefix) CodingKey.stringValue mismatch: \(type(of: key1))('\(key1.stringValue)') != \(type(of: key2))('\(key2.stringValue)')")
     }
 }
+
+// MARK: - GeioPoint
+fileprivate class GeoPoint: NSObject, GeoPointType {
+    let latitude: Double
+    let longitude: Double
+    
+    required init(latitude: Double, longitude: Double) {
+        self.latitude = latitude
+        self.longitude = longitude
+    }
+    
+    static func == (lhs: Point, rhs: Point) -> Bool {
+        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
+}
+
+// MARK: - ReferenceType
+fileprivate class DocumentReference: NSObject, DocumentReferenceType {}

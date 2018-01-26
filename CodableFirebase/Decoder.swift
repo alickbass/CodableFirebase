@@ -13,6 +13,7 @@ class _FirebaseDecoder : Decoder {
     struct _Options {
         let dateDecodingStrategy: FirebaseDecoder.DateDecodingStrategy?
         let dataDecodingStrategy: FirebaseDecoder.DataDecodingStrategy?
+        let skipGeoPointAndReference: Bool
         let userInfo: [CodingUserInfoKey : Any]
     }
     
@@ -1229,6 +1230,8 @@ extension _FirebaseDecoder {
         } else if T.self == Decimal.self || T.self == NSDecimalNumber.self {
             guard let decimal = try self.unbox(value, as: Decimal.self) else { return nil }
             decoded = decimal as! T
+        } else if options.skipGeoPointAndReference && (T.self is GeoPointType.Type || T.self is DocumentReferenceType.Type) {
+            decoded = value as! T
         } else {
             self.storage.push(container: value)
             decoded = try T(from: self)

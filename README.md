@@ -86,6 +86,17 @@ Firestore.firestore().collection("data").document("one").getDocument { (document
 }
 ```
 
+### How to use `GeoPoint` and `DocumentRefence` in Firestore
+
+In order to use these 2 types with `Firestore`, you need to add the following code somewhere in your app:
+
+```swift
+extension DocumentReference: DocumentReferenceType {}
+extension GeoPoint: GeoPointType {}
+```
+
+and now they become `Codable` and can be used properly with `FirestoreEncoder` and `FirestoreDecoder`.
+
 ## Integration
 
 ### CocoaPods (iOS 9+)
