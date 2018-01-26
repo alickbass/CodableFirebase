@@ -8,13 +8,13 @@
 
 import Foundation
 
-protocol GeoPointType: Codable {
+public protocol GeoPointType: Codable {
     var latitude: Double { get }
     var longitude: Double { get }
     init(latitude: Double, longitude: Double)
 }
 
-protocol DocumentReferenceType: Codable {}
+public protocol DocumentReferenceType: Codable {}
 
 open class FirestoreDecoder {
     public init() {}
