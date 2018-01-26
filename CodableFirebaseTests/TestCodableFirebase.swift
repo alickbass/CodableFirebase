@@ -369,6 +369,19 @@ class TestCodableFirebase: XCTestCase {
         _testRoundTrip(of: 3 as Double)
     }
     
+    // MARK: - GeoPoint
+    func testEncodingGeoPoint() {
+        let point = Point(latitude: 2, longitude: 2)
+        XCTAssertEqual((try? FirebaseEncoder().encode(point)) as? NSDictionary, ["latitude": 2, "longitude": 2])
+        XCTAssertEqual(try? FirebaseDecoder().decode(Point.self, from: ["latitude": 2, "longitude": 2]), point)
+    }
+    
+    // MARK: - Document Reference
+    func testEncodingDocumentReference() {
+        XCTAssertThrowsError(try FirebaseEncoder().encode(DocumentReference()))
+        XCTAssertThrowsError(try FirebaseDecoder().decode(DocumentReference.self, from: []))
+    }
+    
     // MARK: - Helper Functions
     private var _emptyDictionary: [String: Any] = [:]
     
@@ -414,6 +427,19 @@ class TestCodableFirebase: XCTestCase {
 
 // MARK: - Test Types
 /* FIXME: Import from %S/Inputs/Coding/SharedTypes.swift somehow. */
+
+// MARK: - GeioPoint
+fileprivate struct Point: GeoPointType, Equatable {
+    let latitude: Double
+    let longitude: Double
+    
+    static func == (lhs: Point, rhs: Point) -> Bool {
+        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
+}
+
+// MARK: - ReferenceType
+fileprivate struct DocumentReference: DocumentReferenceType {}
 
 // MARK: - Empty Types
 fileprivate struct EmptyStruct : Codable, Equatable {
