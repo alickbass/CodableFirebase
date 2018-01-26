@@ -428,8 +428,8 @@ class TestCodableFirebase: XCTestCase {
 // MARK: - Test Types
 /* FIXME: Import from %S/Inputs/Coding/SharedTypes.swift somehow. */
 
-// MARK: - GeioPoint
-fileprivate struct Point: GeoPointType, Equatable {
+// MARK: - GeoPoint
+struct Point: GeoPointType, Equatable {
     let latitude: Double
     let longitude: Double
     
