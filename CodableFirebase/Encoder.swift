@@ -13,7 +13,7 @@ class _FirebaseEncoder : Encoder {
     struct _Options {
         let dateEncodingStrategy: FirebaseEncoder.DateEncodingStrategy?
         let dataEncodingStrategy: FirebaseEncoder.DataEncodingStrategy?
-        let skipGeoPointAndReference: Bool
+        let skipFirestoreTypes: Bool
         let userInfo: [CodingUserInfoKey : Any]
     }
     
@@ -383,7 +383,7 @@ extension _FirebaseEncoder {
             return try self.box((value as! Data))
         } else if T.self == URL.self || T.self == NSURL.self {
             return self.box((value as! URL).absoluteString)
-        } else if options.skipGeoPointAndReference && (value is GeoPointType || value is DocumentReferenceType) {
+        } else if options.skipFirestoreTypes && (value is GeoPointType || value is DocumentReferenceType) {
             guard let value = value as? NSObject else {
                 throw DocumentReferenceError.typeIsNotNSObject
             }
