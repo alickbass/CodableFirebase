@@ -57,7 +57,7 @@ open class FirebaseEncoder {
         let options = _FirebaseEncoder._Options(
             dateEncodingStrategy: dateEncodingStrategy,
             dataEncodingStrategy: dataEncodingStrategy,
-            skipGeoPointAndReference: false,
+            skipFirestoreTypes: false,
             userInfo: userInfo
         )
         let encoder = _FirebaseEncoder(options: options)

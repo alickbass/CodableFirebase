@@ -86,16 +86,19 @@ Firestore.firestore().collection("data").document("one").getDocument { (document
 }
 ```
 
-### How to use `GeoPoint` and `DocumentRefence` in Firestore
+### How to use `GeoPoint`, `DocumentRefence`, `FieldValue` in Firestore
 
 In order to use these 2 types with `Firestore`, you need to add the following code somewhere in your app:
 
 ```swift
 extension DocumentReference: DocumentReferenceType {}
 extension GeoPoint: GeoPointType {}
+extension FieldValue: FieldValueType {}
 ```
 
 and now they become `Codable` and can be used properly with `FirestoreEncoder` and `FirestoreDecoder`.
+
+***PLEASE NOTE*** that as `FieldValue` is only used to [`setData()` and `updateData()`](https://firebase.google.com/docs/reference/swift/firebasefirestore/api/reference/Classes/FieldValue), it only adopts the `Encodable` protocol. 
 
 ## Integration
 
