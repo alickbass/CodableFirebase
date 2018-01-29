@@ -8,13 +8,17 @@
 
 import Foundation
 
-public protocol GeoPointType: Codable {
+public protocol FirestoreDecodable: Decodable {}
+public protocol FirestoreEncodable: Encodable {}
+
+public typealias DocumentReferenceType = FirestoreDecodable & FirestoreEncodable
+public typealias FieldValueType = FirestoreEncodable
+
+public protocol GeoPointType: FirestoreDecodable, FirestoreEncodable {
     var latitude: Double { get }
     var longitude: Double { get }
     init(latitude: Double, longitude: Double)
 }
-
-public protocol DocumentReferenceType: Codable {}
 
 open class FirestoreDecoder {
     public init() {}
@@ -61,11 +65,13 @@ enum DocumentReferenceError: Error {
     case typeIsNotNSObject
 }
 
-extension DocumentReferenceType {
+extension FirestoreDecodable {
     public init(from decoder: Decoder) throws {
         throw DocumentReferenceError.typeIsNotSupported
     }
-    
+}
+
+extension FirestoreEncodable {
     public func encode(to encoder: Encoder) throws {
         throw DocumentReferenceError.typeIsNotSupported
     }
