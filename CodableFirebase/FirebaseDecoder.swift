@@ -53,7 +53,7 @@ open class FirebaseDecoder {
         let options = _FirebaseDecoder._Options(
             dateDecodingStrategy: dateDecodingStrategy,
             dataDecodingStrategy: dataDecodingStrategy,
-            skipGeoPointAndReference: false,
+            skipFirestoreTypes: false,
             userInfo: userInfo
         )
         let decoder = _FirebaseDecoder(referencing: container, options: options)
