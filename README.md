@@ -1,7 +1,7 @@
 # CodableFirebase
 Use [Codable](https://developer.apple.com/documentation/swift/codable) with [Firebase](https://firebase.google.com)
 
-[![CocoaPods](https://img.shields.io/cocoapods/p/CodableFirebase.svg)]()
+[![CocoaPods](https://img.shields.io/cocoapods/p/CodableFirebase.svg)](https://github.com/alickbass/CodableFirebase)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) 
 [![Build Status](https://travis-ci.org/alickbass/CodableFirebase.svg?branch=master)](https://travis-ci.org/alickbass/CodableFirebase)
 
