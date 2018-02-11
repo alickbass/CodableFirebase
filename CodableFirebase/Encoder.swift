@@ -383,6 +383,8 @@ extension _FirebaseEncoder {
             return try self.box((value as! Data))
         } else if T.self == URL.self || T.self == NSURL.self {
             return self.box((value as! URL).absoluteString)
+        } else if T.self == Decimal.self || T.self == NSDecimalNumber.self {
+            return (value as! NSDecimalNumber)
         } else if options.skipFirestoreTypes && (value is FirestoreEncodable) {
             guard let value = value as? NSObject else {
                 throw DocumentReferenceError.typeIsNotNSObject
