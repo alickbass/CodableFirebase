@@ -109,6 +109,11 @@ class TestCodableFirestore: XCTestCase {
         _testRoundTrip(of: TopLevelWrapper(date), expected: ["value": date])
     }
     
+    func testDecimalValue() {
+        let value = Decimal(2)
+        _testRoundTrip(of: TopLevelWrapper(value), expected: ["value": value])
+    }
+    
     // MARK: - GeoPoint & Document Reference
     func testEncodingGeoPoint() {
         let point = GeoPoint(latitude: 2, longitude: 2)
