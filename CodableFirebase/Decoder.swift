@@ -1153,7 +1153,7 @@ extension _FirebaseDecoder {
             
         case .custom(let closure):
             self.storage.push(container: value)
-            let date = try closure(self)
+            let date = try closure(self, value)
             self.storage.popContainer()
             return date
         }
