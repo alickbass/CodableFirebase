@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "CodableFirebase"
-  s.version = "0.1.0"
+  s.version = "0.2.0"
   s.summary = "Use Codable with Firebase"
   s.description = "This library helps you use your custom models that conform to Codable protocol with Firebase Realtime Database and Firestore"
   s.homepage = "https://github.com/alickbass/CodableFirebase"
