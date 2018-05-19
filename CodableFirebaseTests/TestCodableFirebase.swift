@@ -95,6 +95,11 @@ class TestCodableFirebase: XCTestCase {
                        expectedValue: expected,
                        dateEncodingStrategy: .secondsSince1970,
                        dateDecodingStrategy: .secondsSince1970)
+      
+        _testRoundTrip(of: TopLevelWrapper(FirTimestamp(date: Date(timeIntervalSince1970: seconds))),
+                       expectedValue: expected,
+                       dateEncodingStrategy: .secondsSince1970,
+                       dateDecodingStrategy: .secondsSince1970)
         
         _testRoundTrip(of: OptionalTopLevelWrapper(Date(timeIntervalSince1970: seconds)),
                        expectedValue: expected,
@@ -497,6 +502,22 @@ fileprivate struct Timestamp : Codable, Equatable {
     
     static func ==(_ lhs: Timestamp, _ rhs: Timestamp) -> Bool {
         return lhs.value == rhs.value
+    }
+}
+
+fileprivate struct FirTimestamp : TimestampType, Equatable {
+    let date: Date
+  
+    init(date: Date) {
+        self.date = date
+    }
+  
+    func dateValue() -> Date {
+        return date
+    }
+  
+    static func == (_ lhs: FirTimestamp, _ rhs: FirTimestamp) -> Bool {
+        return lhs.date == rhs.date
     }
 }
 

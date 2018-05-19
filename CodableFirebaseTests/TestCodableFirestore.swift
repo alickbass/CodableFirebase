@@ -128,7 +128,14 @@ class TestCodableFirestore: XCTestCase {
         XCTAssertEqual((try? FirestoreEncoder().encode(val)) as NSDictionary?, ["value": val.value])
         XCTAssertEqual(try? FirestoreDecoder().decode(TopLevelWrapper<DocumentReference>.self, from: ["value": val.value]), val)
     }
-    
+  
+    func testEncodingTimestamp() {
+        let timestamp = Timestamp(date: Date())
+        let wrapper = TopLevelWrapper(timestamp)
+        XCTAssertEqual((try? FirestoreEncoder().encode(wrapper)) as NSDictionary?, ["value": timestamp])
+        XCTAssertEqual(try? FirestoreDecoder().decode(TopLevelWrapper<Timestamp>.self, from: ["value": timestamp]), wrapper)
+    }
+  
     private func _testEncodeFailure<T : Encodable>(of value: T) {
         do {
             let _ = try FirestoreEncoder().encode(value)
@@ -195,10 +202,29 @@ fileprivate class GeoPoint: NSObject, GeoPointType {
         self.longitude = longitude
     }
     
-    static func == (lhs: Point, rhs: Point) -> Bool {
-        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object.flatMap({ $0 as? GeoPoint }) else { return false }
+        return latitude == other.latitude && longitude == other.longitude
     }
 }
 
 // MARK: - ReferenceType
 fileprivate class DocumentReference: NSObject, DocumentReferenceType {}
+
+// MARK: - Timestamp
+fileprivate class Timestamp: NSObject, TimestampType {
+    let date: Date
+  
+    required init(date: Date) {
+        self.date = date
+    }
+  
+    func dateValue() -> Date {
+        return date
+    }
+  
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object.flatMap({ $0 as? Timestamp }) else { return false }
+        return date == other.date
+    }
+}
