@@ -86,7 +86,7 @@ Firestore.firestore().collection("data").document("one").getDocument { (document
 }
 ```
 
-### How to use `GeoPoint`, `DocumentRefence`, `FieldValue` in Firestore
+### How to use `GeoPoint`, `DocumentRefence`, `FieldValue`, `Timestamp` in Firestore
 
 In order to use these 2 types with `Firestore`, you need to add the following code somewhere in your app:
 
@@ -94,6 +94,7 @@ In order to use these 2 types with `Firestore`, you need to add the following co
 extension DocumentReference: DocumentReferenceType {}
 extension GeoPoint: GeoPointType {}
 extension FieldValue: FieldValueType {}
+extension Timestamp: TimestampType {}
 ```
 
 and now they become `Codable` and can be used properly with `FirestoreEncoder` and `FirestoreDecoder`.

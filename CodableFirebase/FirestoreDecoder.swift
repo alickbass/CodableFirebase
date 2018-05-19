@@ -20,6 +20,11 @@ public protocol GeoPointType: FirestoreDecodable, FirestoreEncodable {
     init(latitude: Double, longitude: Double)
 }
 
+public protocol TimestampType: FirestoreDecodable, FirestoreEncodable {
+    init(date: Date)
+    func dateValue() -> Date
+}
+
 open class FirestoreDecoder {
     public init() {}
     
@@ -74,5 +79,17 @@ extension FirestoreDecodable {
 extension FirestoreEncodable {
     public func encode(to encoder: Encoder) throws {
         throw DocumentReferenceError.typeIsNotSupported
+    }
+}
+
+extension TimestampType {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        self.init(date: try container.decode(Date.self))
+    }
+  
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(self.dateValue())
     }
 }
