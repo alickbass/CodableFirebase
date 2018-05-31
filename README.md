@@ -20,13 +20,13 @@ struct Model: Codable {
     let numberExample: Double
     let dateExample: Date
     let arrayExample: [String]
-    let nullExample: Int?
+    let optionalExample: Int?
     let objectExample: [String: String]
-    let myEnum: MyEnum
+    let myEnumExample: MyEnum
 }
 ```
 
-### Firebase Database usage
+### Firebase Realtime Database usage
 
 This is how you would use the library with [Firebase Realtime Database](https://firebase.google.com/products/realtime-database/):
 
@@ -43,7 +43,7 @@ Database.database().reference().child("model").setValue(data)
 And here is how you would read the same value from [Firebase Realtime Database](https://firebase.google.com/products/realtime-database/):
 
 ```swift
-Database.database().reference().child("model").observeSingleEvent(of: .value, with: { (snapshot) in
+Database.database().reference().child("model").observeSingleEvent(of: .value, with: { snapshot in
     guard let value = snapshot.value else { return }
     do {
         let model = try FirebaseDecoder().decode(Model.self, from: value)
@@ -54,9 +54,9 @@ Database.database().reference().child("model").observeSingleEvent(of: .value, wi
 })
 ```
 
-### Firestore usage
+### Firebase Cloud Firestore usage
 
-And this is how you would encode it with [Firebase Firestore](https://firebase.google.com/products/firestore/):
+This is how you would encode a model with [Firebase Cloud Firestore](https://firebase.google.com/products/firestore/):
 
 ```swift
 import Firebase
@@ -64,19 +64,19 @@ import CodableFirebase
 
 let model: Model // here you will create an instance of Model
 let docData = try! FirestoreEncoder().encode(model)
-Firestore.firestore().collection("data").document("one").setData(docData) { err in
-    if let err = err {
-        print("Error writing document: \(err)")
+Firestore.firestore().collection("data").document("one").setData(docData) { error in
+    if let error = error {
+        print("Error writing document: \(error)")
     } else {
         print("Document successfully written!")
     }
 }
 ```
 
-And this is how you would decode the same model with [Firebase Firestore](https://firebase.google.com/products/firestore/):
+And this is how you would decode the same model with [Firebase Cloud Firestore](https://firebase.google.com/products/firestore/):
 
 ```swift
-Firestore.firestore().collection("data").document("one").getDocument { (document, error) in
+Firestore.firestore().collection("data").document("one").getDocument { document, error in
     if let document = document {
         let model = try! FirestoreDecoder().decode(Model.self, from: document.data())
         print("Model: \(model)")
@@ -86,9 +86,9 @@ Firestore.firestore().collection("data").document("one").getDocument { (document
 }
 ```
 
-### How to use `GeoPoint`, `DocumentRefence`, `FieldValue`, `Timestamp` in Firestore
+#### How to use `GeoPoint`, `DocumentRefence`, `FieldValue`, `Timestamp` in Cloud Firestore
 
-In order to use these 2 types with `Firestore`, you need to add the following code somewhere in your app:
+In order to use these types with Cloud Firestore, you need to add the following code somewhere in your app:
 
 ```swift
 extension DocumentReference: DocumentReferenceType {}
@@ -112,7 +112,7 @@ platform :ios, '9.0'
 use_frameworks!
 
 target 'MyApp' do
-pod 'CodableFirebase'
+  pod 'CodableFirebase'
 end
 ```
 
