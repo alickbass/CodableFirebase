@@ -41,3 +41,23 @@ public enum DataDecodingStrategy {
     /// Decode the `Data` as a custom value decoded by the given closure.
     case custom((_ decoder: Decoder) throws -> Data)
 }
+
+public enum FirestoreTypeDecodingStrategy {
+    case byProtocol
+}
+
+
+extension CodingUserInfoKey {
+    public static let dateDecodingStrategy: CodingUserInfoKey = CodingUserInfoKey(rawValue: "dateDecodingStrategy")!
+    public static let dataDecodingStrategy: CodingUserInfoKey = CodingUserInfoKey(rawValue: "dataDecodingStrategy")!
+}
+
+extension Dictionary where Key == CodingUserInfoKey, Value == Any {
+    var dateDecodingStrategy: DateDecodingStrategy? {
+        return self[.dateDecodingStrategy] as? DateDecodingStrategy
+    }
+
+    var dataDecodingStrategy: DataDecodingStrategy? {
+        return self[.dataDecodingStrategy] as? DataDecodingStrategy
+    }
+}

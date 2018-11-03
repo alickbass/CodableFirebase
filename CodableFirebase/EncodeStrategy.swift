@@ -45,3 +45,27 @@ public enum DataEncodingStrategy {
     /// If the closure fails to encode a value into the given encoder, the encoder will encode an empty automatic container in its place.
     case custom((Data, Encoder) throws -> Void)
 }
+
+extension CodingUserInfoKey {
+    public static let dateEncodingStrategy: CodingUserInfoKey = CodingUserInfoKey(rawValue: "dateEncodingStrategy")!
+    public static let dataEncodingStrategy: CodingUserInfoKey = CodingUserInfoKey(rawValue: "dataEncodingStrategy")!
+
+    public static let skipFirestoreTypes: CodingUserInfoKey = CodingUserInfoKey(rawValue: "skipFirestoreTypes")!
+}
+
+extension Dictionary where Key == CodingUserInfoKey, Value == Any {
+    var dateEncodingStrategy: DateEncodingStrategy? {
+        return self[.dateEncodingStrategy] as? DateEncodingStrategy
+    }
+
+    var dataEncodingStrategy: DataEncodingStrategy? {
+        return self[.dataEncodingStrategy] as? DataEncodingStrategy
+    }
+
+    var skipFirestoreTypes: Bool {
+        if let skip = self[.skipFirestoreTypes] as? Bool {
+            return skip
+        }
+        return false
+    }
+}

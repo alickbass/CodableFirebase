@@ -12,17 +12,9 @@ open class FirebaseEncoder {
     public init() {}
     
     open var userInfo: [CodingUserInfoKey : Any] = [:]
-    open var dateEncodingStrategy: DateEncodingStrategy = .deferredToDate
-    open var dataEncodingStrategy: DataEncodingStrategy = .deferredToData
-    
+
     open func encode<Value : Encodable>(_ value: Value) throws -> Any {
-        let options = _FirebaseEncoder._Options(
-            dateEncodingStrategy: dateEncodingStrategy,
-            dataEncodingStrategy: dataEncodingStrategy,
-            skipFirestoreTypes: false,
-            userInfo: userInfo
-        )
-        let encoder = _FirebaseEncoder(options: options)
+        let encoder = _FirebaseEncoder(userInfo: userInfo)
         guard let topLevel = try encoder.box_(value) else {
             throw EncodingError.invalidValue(value,
                                              EncodingError.Context(codingPath: [],
