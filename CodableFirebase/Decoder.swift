@@ -1104,6 +1104,9 @@ extension _FirebaseDecoder {
         }
         
         switch options {
+        case .deferredToTimestamp:
+            let timestamp = value as! TimestampType
+            return timestamp.dateValue()
         case .deferredToDate:
             self.storage.push(container: value)
             let date = try Date(from: self)
@@ -1219,7 +1222,13 @@ extension _FirebaseDecoder {
             decoded = decimal as! T
         }
         else if userInfo.skipFirestoreTypes && (T.self is FirestoreDecodable.Type) {
-            decoded = value as! T
+            let strategy = userInfo.firestoreTypeDecodingStrategy
+            switch strategy {
+            case .deferredToPtotocol:
+                decoded = value as! T
+            case .custom(let decodeFunc):
+                decoded = try decodeFunc(value) as! T
+            }
         }
         else {
             self.storage.push(container: value)

@@ -13,6 +13,8 @@ public enum DateEncodingStrategy {
     /// Defer to `Date` for choosing an encoding. This is the default strategy.
     case deferredToDate
 
+    case deferredToTimestamp((Date) -> TimestampType)
+
     /// Encode the `Date` as a UNIX timestamp (as a JSON number).
     case secondsSince1970
 
@@ -46,11 +48,19 @@ public enum DataEncodingStrategy {
     case custom((Data, Encoder) throws -> Void)
 }
 
+public enum FirestoreTypeEncodingStrategy {
+    case deferredToPtotocol
+    case custom((_ value: Any) throws -> Any)
+}
+
 extension CodingUserInfoKey {
     public static let dateEncodingStrategy: CodingUserInfoKey = CodingUserInfoKey(rawValue: "dateEncodingStrategy")!
+
     public static let dataEncodingStrategy: CodingUserInfoKey = CodingUserInfoKey(rawValue: "dataEncodingStrategy")!
 
     public static let skipFirestoreTypes: CodingUserInfoKey = CodingUserInfoKey(rawValue: "skipFirestoreTypes")!
+
+    public static let firestoreTypeEncodingStrategy: CodingUserInfoKey = CodingUserInfoKey(rawValue: "firestoreTypeEncodingStrategy")!
 }
 
 extension Dictionary where Key == CodingUserInfoKey, Value == Any {
@@ -67,5 +77,13 @@ extension Dictionary where Key == CodingUserInfoKey, Value == Any {
             return skip
         }
         return false
+    }
+
+    var firestoreTypeEncodingStrategy: FirestoreTypeEncodingStrategy {
+        if let strategy = self[.firestoreTypeEncodingStrategy] as? FirestoreTypeEncodingStrategy {
+            return strategy
+        }
+
+        return FirestoreTypeEncodingStrategy.deferredToPtotocol
     }
 }

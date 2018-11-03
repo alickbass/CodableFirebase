@@ -26,9 +26,11 @@ public protocol TimestampType: FirestoreDecodable, FirestoreEncodable {
 }
 
 open class FirestoreDecoder {
-    public init() {}
+    public init(userInfo: [CodingUserInfoKey: Any] = [.skipFirestoreTypes: true]) {
+        self.userInfo = userInfo
+    }
     
-    open var userInfo: [CodingUserInfoKey : Any] = [.skipFirestoreTypes: true]
+    public let userInfo: [CodingUserInfoKey: Any]
     
     open func decode<T : Decodable>(_ type: T.Type, from container: [String: Any]) throws -> T {
         let decoder = _FirebaseDecoder(referencing: container,

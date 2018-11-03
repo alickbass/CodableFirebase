@@ -9,10 +9,12 @@
 import Foundation
 
 open class FirestoreEncoder {
-    public init() {}
+    public init(userInfo: [CodingUserInfoKey: Any] =  [.skipFirestoreTypes: true]) {
+        self.userInfo = userInfo
+    }
     
-    open var userInfo: [CodingUserInfoKey : Any] = [.skipFirestoreTypes: true]
-    
+    public let userInfo: [CodingUserInfoKey: Any]
+
     open func encode<Value : Encodable>(_ value: Value) throws -> [String: Any] {
         let topLevel = try encodeToTopLevelContainer(value)
         switch topLevel {

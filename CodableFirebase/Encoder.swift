@@ -306,6 +306,8 @@ extension _FirebaseEncoder {
         guard let options = userInfo.dateEncodingStrategy else { return date as NSDate }
         
         switch options {
+        case .deferredToTimestamp(let converter):
+            return converter(date) as! NSObject
         case .deferredToDate:
             // Must be called with a surrounding with(pushedKey:) call.
             try date.encode(to: self)
@@ -377,10 +379,18 @@ extension _FirebaseEncoder {
         } else if T.self == Decimal.self || T.self == NSDecimalNumber.self {
             return (value as! NSDecimalNumber)
         } else if userInfo.skipFirestoreTypes && (value is FirestoreEncodable) {
-            guard let value = value as? NSObject else {
+            let target: Any
+            switch userInfo.firestoreTypeDecodingStrategy {
+            case .deferredToPtotocol:
+                target = value
+            case .custom(let encodeFunc):
+                target = try encodeFunc(value)
+            }
+
+            guard let result = target as? NSObject else {
                 throw DocumentReferenceError.typeIsNotNSObject
             }
-            return value
+            return result
         }
         
         // The value should request a container from the _FirebaseEncoder.
