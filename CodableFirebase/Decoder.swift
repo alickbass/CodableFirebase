@@ -11,8 +11,8 @@ import Foundation
 class _FirebaseDecoder : Decoder {
     /// Options set on the top-level encoder to pass down the decoding hierarchy.
     struct _Options {
-        let dateDecodingStrategy: FirebaseDecoder.DateDecodingStrategy?
-        let dataDecodingStrategy: FirebaseDecoder.DataDecodingStrategy?
+        let dateDecodingStrategy: DateDecodingStrategy?
+        let dataDecodingStrategy: DataDecodingStrategy?
         let skipFirestoreTypes: Bool
         let userInfo: [CodingUserInfoKey : Any]
     }
