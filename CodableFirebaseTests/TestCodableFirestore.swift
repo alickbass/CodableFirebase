@@ -250,7 +250,3 @@ fileprivate class Timestamp: NSObject, TimestampType {
         return date == other.date
     }
 }
-
-extension Date: FirestoreEncodable {
-
-}
