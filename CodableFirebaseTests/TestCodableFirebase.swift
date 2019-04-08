@@ -226,7 +226,7 @@ class TestCodableFirebase: XCTestCase {
     
     // MARK: - Data Strategy Tests
     func testEncodingData() {
-        let data = Data(bytes: [0xDE, 0xAD, 0xBE, 0xEF])
+        let data = Data([0xDE, 0xAD, 0xBE, 0xEF])
         let expectedValue = ["value":[222,173,190,239]]
         
         _testRoundTrip(of: data,
@@ -247,7 +247,7 @@ class TestCodableFirebase: XCTestCase {
     }
     
     func testEncodingDataBase64() {
-        let data = Data(bytes: [0xDE, 0xAD, 0xBE, 0xEF])
+        let data = Data([0xDE, 0xAD, 0xBE, 0xEF])
         let expectedValue = ["value":"3q2+7w=="]
         
         _testRoundTrip(of: data, expectedValue: "3q2+7w==")
@@ -414,7 +414,7 @@ class TestCodableFirebase: XCTestCase {
             let decoder = FirebaseDecoder()
             decoder.dateDecodingStrategy = dateDecodingStrategy
             decoder.dataDecodingStrategy = dataDecodingStrategy
-            let decoded = try decoder.decode(T.self, from: payload)
+            let decoded = try decoder.decode(T.self, from: payload!)
             XCTAssertEqual(decoded, value, "\(T.self) did not round-trip to an equal value.")
         } catch {
             XCTFail("Failed to decode \(T.self) from val: \(error)")
