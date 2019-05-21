@@ -128,14 +128,36 @@ class TestCodableFirestore: XCTestCase {
         XCTAssertEqual((try? FirestoreEncoder().encode(val)) as NSDictionary?, ["value": val.value])
         XCTAssertEqual(try? FirestoreDecoder().decode(TopLevelWrapper<DocumentReference>.self, from: ["value": val.value]), val)
     }
-  
+
     func testEncodingTimestamp() {
         let timestamp = Timestamp(date: Date())
         let wrapper = TopLevelWrapper(timestamp)
         XCTAssertEqual((try? FirestoreEncoder().encode(wrapper)) as NSDictionary?, ["value": timestamp])
         XCTAssertEqual(try? FirestoreDecoder().decode(TopLevelWrapper<Timestamp>.self, from: ["value": timestamp]), wrapper)
     }
-  
+
+    func testCustomEncodingTimestamp() {
+        let date = Date()
+        let timestamp = Timestamp(date: date)
+
+        // encode date to Timestamp
+        let encodeWrapper = TopLevelWrapper(date)
+        let encodeResult = (try? FirestoreEncoder(userInfo: [CodingUserInfoKey.dateEncodingStrategy: DateEncodingStrategy.deferredToTimestamp({ date in
+            return Timestamp(date: date)
+        })])
+            .encode(encodeWrapper)) as NSDictionary?
+        XCTAssertEqual(encodeResult, ["value": timestamp])
+
+        // decode timestamp to date
+        let decodeWrapper = TopLevelWrapper(timestamp)
+        let decoder = FirestoreDecoder(userInfo: [
+            CodingUserInfoKey.dateDecodingStrategy: DateDecodingStrategy.deferredToTimestamp
+            ])
+
+        let decodeResult = (try? decoder.decode(TopLevelWrapper<Timestamp>.self, from: ["value": timestamp]))
+        XCTAssertEqual(decodeResult, decodeWrapper)
+    }
+
     private func _testEncodeFailure<T : Encodable>(of value: T) {
         do {
             let _ = try FirestoreEncoder().encode(value)
@@ -214,15 +236,15 @@ fileprivate class DocumentReference: NSObject, DocumentReferenceType {}
 // MARK: - Timestamp
 fileprivate class Timestamp: NSObject, TimestampType {
     let date: Date
-  
+
     required init(date: Date) {
         self.date = date
     }
-  
+
     func dateValue() -> Date {
         return date
     }
-  
+
     override func isEqual(_ object: Any?) -> Bool {
         guard let other = object.flatMap({ $0 as? Timestamp }) else { return false }
         return date == other.date

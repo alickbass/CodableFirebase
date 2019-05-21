@@ -26,18 +26,15 @@ public protocol TimestampType: FirestoreDecodable, FirestoreEncodable {
 }
 
 open class FirestoreDecoder {
-    public init() {}
+    public init(userInfo: [CodingUserInfoKey: Any] = [.skipFirestoreTypes: true]) {
+        self.userInfo = userInfo
+    }
     
-    open var userInfo: [CodingUserInfoKey : Any] = [:]
+    public let userInfo: [CodingUserInfoKey: Any]
     
     open func decode<T : Decodable>(_ type: T.Type, from container: [String: Any]) throws -> T {
-        let options = _FirebaseDecoder._Options(
-            dateDecodingStrategy: nil,
-            dataDecodingStrategy: nil,
-            skipFirestoreTypes: true,
-            userInfo: userInfo
-        )
-        let decoder = _FirebaseDecoder(referencing: container, options: options)
+        let decoder = _FirebaseDecoder(referencing: container,
+                                       userInfo: userInfo)
         guard let value = try decoder.unbox(container, as: T.self) else {
             throw DecodingError.valueNotFound(T.self, DecodingError.Context(codingPath: [], debugDescription: "The given dictionary was invalid"))
         }
@@ -87,7 +84,7 @@ extension TimestampType {
         let container = try decoder.singleValueContainer()
         self.init(date: try container.decode(Date.self))
     }
-  
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(self.dateValue())

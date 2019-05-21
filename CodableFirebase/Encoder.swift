@@ -10,25 +10,16 @@ import Foundation
 
 class _FirebaseEncoder : Encoder {
     /// Options set on the top-level encoder to pass down the encoding hierarchy.
-    struct _Options {
-        let dateEncodingStrategy: FirebaseEncoder.DateEncodingStrategy?
-        let dataEncodingStrategy: FirebaseEncoder.DataEncodingStrategy?
-        let skipFirestoreTypes: Bool
-        let userInfo: [CodingUserInfoKey : Any]
-    }
-    
     fileprivate var storage: _FirebaseEncodingStorage
-    fileprivate let options: _Options
+
     fileprivate(set) public var codingPath: [CodingKey]
     
-    public var userInfo: [CodingUserInfoKey : Any] {
-        return options.userInfo
-    }
+    let userInfo: [CodingUserInfoKey: Any]
     
-    init(options: _Options, codingPath: [CodingKey] = []) {
+    init(userInfo: [CodingUserInfoKey: Any], codingPath: [CodingKey] = []) {
         self.storage = _FirebaseEncodingStorage()
         self.codingPath = codingPath
-        self.options = options
+        self.userInfo = userInfo
     }
     
     /// Returns whether a new element can be encoded at this coding path.
@@ -312,9 +303,11 @@ extension _FirebaseEncoder {
     }
     
     fileprivate func box(_ date: Date) throws -> NSObject {
-        guard let options = options.dateEncodingStrategy else { return date as NSDate }
+        guard let options = userInfo.dateEncodingStrategy else { return date as NSDate }
         
         switch options {
+        case .deferredToTimestamp(let converter):
+            return converter(date) as! NSObject
         case .deferredToDate:
             // Must be called with a surrounding with(pushedKey:) call.
             try date.encode(to: self)
@@ -351,7 +344,7 @@ extension _FirebaseEncoder {
     }
     
     fileprivate func box(_ data: Data) throws -> NSObject {
-        guard let options = options.dataEncodingStrategy else { return data as NSData }
+        guard let options = userInfo.dataEncodingStrategy else { return data as NSData }
         
         switch options {
         case .deferredToData:
@@ -385,11 +378,19 @@ extension _FirebaseEncoder {
             return self.box((value as! URL).absoluteString)
         } else if T.self == Decimal.self || T.self == NSDecimalNumber.self {
             return (value as! NSDecimalNumber)
-        } else if options.skipFirestoreTypes && (value is FirestoreEncodable) {
-            guard let value = value as? NSObject else {
+        } else if userInfo.skipFirestoreTypes && (value is FirestoreEncodable) {
+            let target: Any
+            switch userInfo.firestoreTypeDecodingStrategy {
+            case .deferredToPtotocol:
+                target = value
+            case .custom(let encodeFunc):
+                target = try encodeFunc(value)
+            }
+
+            guard let result = target as? NSObject else {
                 throw DocumentReferenceError.typeIsNotNSObject
             }
-            return value
+            return result
         }
         
         // The value should request a container from the _FirebaseEncoder.
@@ -524,7 +525,7 @@ fileprivate class _FirebaseReferencingEncoder : _FirebaseEncoder {
     fileprivate init(referencing encoder: _FirebaseEncoder, at index: Int, wrapping array: NSMutableArray) {
         self.encoder = encoder
         self.reference = .array(array, index)
-        super.init(options: encoder.options, codingPath: encoder.codingPath)
+        super.init(userInfo: encoder.userInfo, codingPath: encoder.codingPath)
         
         self.codingPath.append(_FirebaseKey(index: index))
     }
@@ -533,7 +534,7 @@ fileprivate class _FirebaseReferencingEncoder : _FirebaseEncoder {
     fileprivate init(referencing encoder: _FirebaseEncoder, at key: CodingKey, wrapping dictionary: NSMutableDictionary) {
         self.encoder = encoder
         reference = .dictionary(dictionary, key.stringValue)
-        super.init(options: encoder.options, codingPath: encoder.codingPath)
+        super.init(userInfo: encoder.userInfo, codingPath: encoder.codingPath)
         codingPath.append(key)
     }
     

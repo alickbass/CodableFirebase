@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09D19A4B218D64F900A862A3 /* DecodeStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D19A4A218D64F900A862A3 /* DecodeStrategy.swift */; };
+		09D19A4D218D650000A862A3 /* EncodeStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D19A4C218D650000A862A3 /* EncodeStrategy.swift */; };
+		09D19A4E218D874000A862A3 /* FirestoreDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DD3821F9D04AE000225C5 /* FirestoreDecoder.swift */; };
+		09D19A4F218D88A800A862A3 /* FirestoreEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DD3811F9D04AE000225C5 /* FirestoreEncoder.swift */; };
 		CE7DD3711F9CFA81000225C5 /* CodableFirebase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7DD3671F9CFA81000225C5 /* CodableFirebase.framework */; };
 		CE7DD3781F9CFA81000225C5 /* CodableFirebase.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7DD36A1F9CFA81000225C5 /* CodableFirebase.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CE7DD3831F9D04AE000225C5 /* FirestoreEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DD3811F9D04AE000225C5 /* FirestoreEncoder.swift */; };
-		CE7DD3841F9D04AE000225C5 /* FirestoreDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DD3821F9D04AE000225C5 /* FirestoreDecoder.swift */; };
 		CE7DD3861F9DE4F7000225C5 /* TestCodableFirestore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DD3851F9DE4F7000225C5 /* TestCodableFirestore.swift */; };
 		CEFDBF821FF3B35B00745EBE /* Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFDBF811FF3B35B00745EBE /* Encoder.swift */; };
 		CEFDBF861FF3B56200745EBE /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEFDBF851FF3B56200745EBE /* Decoder.swift */; };
@@ -31,6 +33,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		09D19A4A218D64F900A862A3 /* DecodeStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecodeStrategy.swift; sourceTree = "<group>"; };
+		09D19A4C218D650000A862A3 /* EncodeStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncodeStrategy.swift; sourceTree = "<group>"; };
 		CE7DD3671F9CFA81000225C5 /* CodableFirebase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CodableFirebase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE7DD36A1F9CFA81000225C5 /* CodableFirebase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodableFirebase.h; sourceTree = "<group>"; };
 		CE7DD36B1F9CFA81000225C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -92,6 +96,8 @@
 				CE7DD3811F9D04AE000225C5 /* FirestoreEncoder.swift */,
 				CEFDBF891FF3E24200745EBE /* FirebaseDecoder.swift */,
 				CEFDBF8B1FF3E3CB00745EBE /* FirebaseEncoder.swift */,
+				09D19A4A218D64F900A862A3 /* DecodeStrategy.swift */,
+				09D19A4C218D650000A862A3 /* EncodeStrategy.swift */,
 				CEFDBF851FF3B56200745EBE /* Decoder.swift */,
 				CEFDBF811FF3B35B00745EBE /* Encoder.swift */,
 				CE7DD36B1F9CFA81000225C5 /* Info.plist */,
@@ -223,11 +229,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE7DD3831F9D04AE000225C5 /* FirestoreEncoder.swift in Sources */,
+				09D19A4D218D650000A862A3 /* EncodeStrategy.swift in Sources */,
 				CEFDBF8C1FF3E3CB00745EBE /* FirebaseEncoder.swift in Sources */,
+				09D19A4B218D64F900A862A3 /* DecodeStrategy.swift in Sources */,
+				09D19A4E218D874000A862A3 /* FirestoreDecoder.swift in Sources */,
+				09D19A4F218D88A800A862A3 /* FirestoreEncoder.swift in Sources */,
 				CEFDBF821FF3B35B00745EBE /* Encoder.swift in Sources */,
 				CEFDBF861FF3B56200745EBE /* Decoder.swift in Sources */,
-				CE7DD3841F9D04AE000225C5 /* FirestoreDecoder.swift in Sources */,
 				CEFDBF8A1FF3E24200745EBE /* FirebaseDecoder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

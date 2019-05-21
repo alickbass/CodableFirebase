@@ -392,15 +392,15 @@ class TestCodableFirebase: XCTestCase {
     
     private func _testRoundTrip<T>(of value: T,
                                    expectedValue json: Any? = nil,
-                                   dateEncodingStrategy: FirebaseEncoder.DateEncodingStrategy = .deferredToDate,
-                                   dateDecodingStrategy: FirebaseDecoder.DateDecodingStrategy = .deferredToDate,
-                                   dataEncodingStrategy: FirebaseEncoder.DataEncodingStrategy = .base64,
-                                   dataDecodingStrategy: FirebaseDecoder.DataDecodingStrategy = .base64) where T : Codable, T : Equatable {
+                                   dateEncodingStrategy: DateEncodingStrategy = .deferredToDate,
+                                   dateDecodingStrategy: DateDecodingStrategy = .deferredToDate,
+                                   dataEncodingStrategy: DataEncodingStrategy = .base64,
+                                   dataDecodingStrategy: DataDecodingStrategy = .base64) where T : Codable, T : Equatable {
         var payload: Any! = nil
         do {
             let encoder = FirebaseEncoder()
-            encoder.dateEncodingStrategy = dateEncodingStrategy
-            encoder.dataEncodingStrategy = dataEncodingStrategy
+            encoder.userInfo[.dateEncodingStrategy] = dateEncodingStrategy
+            encoder.userInfo[.dataEncodingStrategy] = dataEncodingStrategy
             payload = try encoder.encode(value)
         } catch {
             XCTFail("Failed to encode \(T.self) to val: \(error)")
