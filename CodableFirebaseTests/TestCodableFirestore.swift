@@ -15,6 +15,7 @@ fileprivate struct Document: Codable, Equatable {
     let numberExample: Double
     let dateExample: Date
     let arrayExample: [String]
+    let indexSetExample: IndexSet?
     let nullExample: Int?
     let objectExample: [String: String]
     
@@ -24,6 +25,7 @@ fileprivate struct Document: Codable, Equatable {
             && lhs.numberExample == rhs.numberExample
             && lhs.dateExample == rhs.dateExample
             && lhs.arrayExample == rhs.arrayExample
+            && lhs.indexSetExample == rhs.indexSetExample
             && lhs.nullExample == rhs.nullExample
             && lhs.objectExample == rhs.objectExample
     }
@@ -65,6 +67,7 @@ class TestCodableFirestore: XCTestCase {
             numberExample: 3.14159265,
             dateExample: Date(),
             arrayExample: ["hello", "world"],
+            indexSetExample: IndexSet([1, 2, 5, 9]),
             nullExample: nil,
             objectExample: ["objectExample": "one"]
         )
@@ -75,7 +78,8 @@ class TestCodableFirestore: XCTestCase {
             "numberExample": 3.14159265,
             "dateExample": model.dateExample,
             "arrayExample": ["hello", "world"],
-            "objectExample": ["objectExample": "one"]
+            "indexSetExample": IndexSet([1, 2, 5, 9]),
+            "objectExample": ["objectExample": "one"],
         ]
         
         XCTAssertEqual((try FirestoreEncoder().encode(model)) as NSDictionary, dict as NSDictionary)
