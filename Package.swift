@@ -10,6 +10,11 @@ let package = Package(
         .target(
             name: "CodableFirebase",
             path: "CodableFirebase"
+        ),
+        .testTarget(
+            name: "CodableFirebaseTests",
+            dependencies: ["CodableFirebase"],
+            path: "CodableFirebaseTests"
         )
     ]
 )
