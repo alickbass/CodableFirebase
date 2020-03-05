@@ -2,7 +2,7 @@
 Use [Codable](https://developer.apple.com/documentation/swift/codable) with [Firebase](https://firebase.google.com)
 
 [![CocoaPods](https://img.shields.io/cocoapods/p/CodableFirebase.svg)](https://github.com/alickbass/CodableFirebase)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) 
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Build Status](https://travis-ci.org/alickbass/CodableFirebase.svg?branch=master)](https://travis-ci.org/alickbass/CodableFirebase)
 
 ## Overview
@@ -14,7 +14,7 @@ struct Model: Codable {
     enum MyEnum: Int, Codable {
         case one, two, three
     }
-    
+
     let stringExample: String
     let booleanExample: Bool
     let numberExample: Double
@@ -91,6 +91,8 @@ Firestore.firestore().collection("data").document("one").getDocument { document,
 In order to use these types with Cloud Firestore, you need to add the following code somewhere in your app:
 
 ```swift
+import CodableFirebase
+
 extension DocumentReference: DocumentReferenceType {}
 extension GeoPoint: GeoPointType {}
 extension FieldValue: FieldValueType {}
@@ -99,7 +101,7 @@ extension Timestamp: TimestampType {}
 
 and now they become `Codable` and can be used properly with `FirestoreEncoder` and `FirestoreDecoder`.
 
-***PLEASE NOTE*** that as `FieldValue` is only used to [`setData()` and `updateData()`](https://firebase.google.com/docs/reference/swift/firebasefirestore/api/reference/Classes/FieldValue), it only adopts the `Encodable` protocol. 
+***PLEASE NOTE*** that as `FieldValue` is only used to [`setData()` and `updateData()`](https://firebase.google.com/docs/reference/swift/firebasefirestore/api/reference/Classes/FieldValue), it only adopts the `Encodable` protocol.
 
 ## Integration
 
