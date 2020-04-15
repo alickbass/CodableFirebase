@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.2
 import PackageDescription
 
 let package = Package(
@@ -9,7 +9,9 @@ let package = Package(
     targets: [
         .target(
             name: "CodableFirebase",
-            path: "CodableFirebase"
-        )
+            dependencies: []),
+        .testTarget(
+            name: "CodableFirebaseTests",
+            dependencies: ["CodableFirebase"]),
     ]
 )
