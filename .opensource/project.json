@@ -1,0 +1,6 @@
+{
+    "name": "CodableFirebase",
+    "type": "library",
+    "platforms": ["iOS"],
+    "content": "README.md"
+  }
