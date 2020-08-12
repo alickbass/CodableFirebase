@@ -353,22 +353,6 @@ fileprivate struct _FirebaseKeyedDecodingContainer<K : CodingKey> : KeyedDecodin
         
         return value
     }
-
-    public func decode(_ type: IndexSet.Type, forKey key: Key) throws -> IndexSet {
-        guard let entry = self.container[key.stringValue] else {
-            throw DecodingError.keyNotFound(key, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "No value associated with key \(key) (\"\(key.stringValue)\")."))
-        }
-
-        self.decoder.codingPath.append(key)
-        defer { self.decoder.codingPath.removeLast() }
-
-        guard let value = try self.decoder.unbox(entry, as: Array<Int>.self) else {
-            throw DecodingError.valueNotFound(type, DecodingError.Context(codingPath: self.decoder.codingPath, debugDescription: "Expected \(type) value but found null instead."))
-        }
-
-        return IndexSet(value)
-    }
-
     
     public func decode<T : Decodable>(_ type: T.Type, forKey key: Key) throws -> T {
         guard let entry = container[key.stringValue] else {
@@ -1140,16 +1124,16 @@ extension _FirebaseDecoder {
             return date
             
         case .secondsSince1970:
-            let double = try self.unbox(value, as: Double.self)!
+            guard let double = try self.unbox(value, as: Double.self) else { return nil }
             return Date(timeIntervalSince1970: double)
             
         case .millisecondsSince1970:
-            let double = try self.unbox(value, as: Double.self)!
+            guard let double = try self.unbox(value, as: Double.self) else { return nil }
             return Date(timeIntervalSince1970: double / 1000.0)
             
         case .iso8601:
             if #available(OSX 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *) {
-                let string = try self.unbox(value, as: String.self)!
+                guard let string = try self.unbox(value, as: String.self) else { return nil }
                 guard let date = _iso8601Formatter.date(from: string) else {
                     throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Expected date string to be ISO8601-formatted."))
                 }
@@ -1160,7 +1144,7 @@ extension _FirebaseDecoder {
             }
             
         case .formatted(let formatter):
-            let string = try self.unbox(value, as: String.self)!
+            guard let string = try self.unbox(value, as: String.self) else { return nil }
             guard let date = formatter.date(from: string) else {
                 throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Date string does not match format expected by formatter."))
             }
@@ -1219,19 +1203,21 @@ extension _FirebaseDecoder {
         if let decimal = value as? Decimal {
             return decimal
         } else {
-            let doubleValue = try self.unbox(value, as: Double.self)!
+            guard let doubleValue = try self.unbox(value, as: Double.self) else {
+                return nil
+            }
             return Decimal(doubleValue)
         }
     }
     
     func unbox<T : Decodable>(_ value: Any, as type: T.Type) throws -> T? {
-        let decoded: T
+        let decoded: T?
         if T.self == Date.self || T.self == NSDate.self {
             guard let date = try self.unbox(value, as: Date.self) else { return nil }
-            decoded = date as! T
+            decoded = date as? T
         } else if T.self == Data.self || T.self == NSData.self {
             guard let data = try self.unbox(value, as: Data.self) else { return nil }
-            decoded = data as! T
+            decoded = data as? T
         } else if T.self == URL.self || T.self == NSURL.self {
             guard let urlString = try self.unbox(value, as: String.self) else {
                 return nil
@@ -1242,14 +1228,12 @@ extension _FirebaseDecoder {
                                                                         debugDescription: "Invalid URL string."))
             }
             
-            decoded = (url as! T)
+            decoded = (url as? T)
         } else if T.self == Decimal.self || T.self == NSDecimalNumber.self {
             guard let decimal = try self.unbox(value, as: Decimal.self) else { return nil }
-            decoded = decimal as! T
-        } else if T.self == IndexSet.self || T.self == NSIndexSet.self {
-            decoded = value as! T
+            decoded = decimal as? T
         } else if options.skipFirestoreTypes && (T.self is FirestoreDecodable.Type) {
-            decoded = value as! T
+            decoded = value as? T
         } else {
             self.storage.push(container: value)
             decoded = try T(from: self)
