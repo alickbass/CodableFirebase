@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CDEFDEDB243A3AEF0055A172 /* TopLevelDecoder+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDEFDEDA243A3AEF0055A172 /* TopLevelDecoder+Extensions.swift */; };
 		CE7DD3711F9CFA81000225C5 /* CodableFirebase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7DD3671F9CFA81000225C5 /* CodableFirebase.framework */; };
 		CE7DD3781F9CFA81000225C5 /* CodableFirebase.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7DD36A1F9CFA81000225C5 /* CodableFirebase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CE7DD3831F9D04AE000225C5 /* FirestoreEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7DD3811F9D04AE000225C5 /* FirestoreEncoder.swift */; };
@@ -31,6 +32,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CDEFDEDA243A3AEF0055A172 /* TopLevelDecoder+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TopLevelDecoder+Extensions.swift"; sourceTree = "<group>"; };
 		CE7DD3671F9CFA81000225C5 /* CodableFirebase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CodableFirebase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE7DD36A1F9CFA81000225C5 /* CodableFirebase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodableFirebase.h; sourceTree = "<group>"; };
 		CE7DD36B1F9CFA81000225C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 				CEFDBF851FF3B56200745EBE /* Decoder.swift */,
 				CEFDBF811FF3B35B00745EBE /* Encoder.swift */,
 				CE7DD36B1F9CFA81000225C5 /* Info.plist */,
+				CDEFDEDA243A3AEF0055A172 /* TopLevelDecoder+Extensions.swift */,
 			);
 			path = CodableFirebase;
 			sourceTree = "<group>";
@@ -243,6 +246,7 @@
 				CEFDBF8C1FF3E3CB00745EBE /* FirebaseEncoder.swift in Sources */,
 				CEFDBF821FF3B35B00745EBE /* Encoder.swift in Sources */,
 				CEFDBF861FF3B56200745EBE /* Decoder.swift in Sources */,
+				CDEFDEDB243A3AEF0055A172 /* TopLevelDecoder+Extensions.swift in Sources */,
 				CE7DD3841F9D04AE000225C5 /* FirestoreDecoder.swift in Sources */,
 				CEFDBF8A1FF3E24200745EBE /* FirebaseDecoder.swift in Sources */,
 			);
