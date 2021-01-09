@@ -1256,7 +1256,7 @@ extension _FirebaseDecoder {
             self.storage.popContainer()
         }
         guard let decoded = maybeDecoded else {
-            throw Exception("Can't decode type: \(value)")
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: "Can't decode type: \(value)"))
         }
         return decoded
     }
