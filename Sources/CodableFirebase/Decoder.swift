@@ -1225,13 +1225,13 @@ extension _FirebaseDecoder {
     }
     
     func unbox<T : Decodable>(_ value: Any, as type: T.Type) throws -> T? {
-        let decoded: T
+        let maybeDecoded: T?
         if T.self == Date.self || T.self == NSDate.self {
             guard let date = try self.unbox(value, as: Date.self) else { return nil }
-            decoded = date as! T
+            maybeDecoded = date as? T
         } else if T.self == Data.self || T.self == NSData.self {
             guard let data = try self.unbox(value, as: Data.self) else { return nil }
-            decoded = data as! T
+            maybeDecoded = data as? T
         } else if T.self == URL.self || T.self == NSURL.self {
             guard let urlString = try self.unbox(value, as: String.self) else {
                 return nil
@@ -1242,20 +1242,22 @@ extension _FirebaseDecoder {
                                                                         debugDescription: "Invalid URL string."))
             }
             
-            decoded = (url as! T)
+            maybeDecoded = (url as? T)
         } else if T.self == Decimal.self || T.self == NSDecimalNumber.self {
             guard let decimal = try self.unbox(value, as: Decimal.self) else { return nil }
-            decoded = decimal as! T
+            maybeDecoded = decimal as? T
         } else if T.self == IndexSet.self || T.self == NSIndexSet.self {
-            decoded = value as! T
+            maybeDecoded = value as? T
         } else if options.skipFirestoreTypes && (T.self is FirestoreDecodable.Type) {
-            decoded = value as! T
+            maybeDecoded = value as? T
         } else {
             self.storage.push(container: value)
-            decoded = try T(from: self)
+            maybeDecoded = try T(from: self)
             self.storage.popContainer()
         }
-        
+        guard let decoded = maybeDecoded else {
+            throw Exception("Can't decode type: \(value)")
+        }
         return decoded
     }
 }
