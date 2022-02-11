@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "CodableFirebase"
-  s.version = "0.2.1"
+  s.version = "0.2.2"
   s.summary = "Use Codable with Firebase"
   s.description = "This library helps you use your custom models that conform to Codable protocol with Firebase Realtime Database and Firestore"
   s.homepage = "https://github.com/alickbass/CodableFirebase"
@@ -14,6 +14,6 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.source = { :git => "https://github.com/alickbass/CodableFirebase.git", :tag => s.version, :branch => 'master'}
-  s.source_files = "CodableFirebase/*.swift"
+  s.source_files = "Sources/CodableFirebase/*.swift"
   s.swift_version = '5.0'
 end
